@@ -9,7 +9,7 @@
 
 **Platform:** Web application (responsive; must work well on desktop, tablet, and phone browsers).
 **Scope (v1):** One focused module — **Passwords & Phishing Awareness**.
-**Visual style:** Minimalist / clean puzzle-app aesthetic — not cartoon-heavy. Calm color palette, generous whitespace, large legible type, simple flat iconography (no mascots or story-driven characters).
+**Visual style (updated after v1 vertical-slice review):** Vibrant and playful, not cartoon/mascot-driven. Started as a minimalist aesthetic; user testing showed it read as flat and uninteresting to the target age group, so the direction shifted toward a more saturated color palette, micro-animations on key interactions, and short sound effects — while keeping the app calm and non-chaotic overall (see Section 7 for full detail).
 
 ---
 
@@ -59,6 +59,45 @@ Content must be **age-appropriate, non-alarming, and non-technical** — no real
 
 All email/website examples must use **entirely fictional brand names** — do not reference real companies, games, or platforms, to avoid both IP concerns and inadvertently teaching real-world lookalike domains.
 
+**Intro screen requirement:** The target age group (8–10) may not yet know key terms the puzzles are built around (e.g., "password," "phishing," "link"). Each puzzle unit must open with a brief, plain-language intro (1–2 sentences, one simple concrete example) explaining the key term before any interaction begins — e.g., unit 1 explains what a "password" is, unit 3 explains what "phishing" means, unit 5 explains what a "link" is. Dismissible with a clear "Let's play!" button; also reachable again via a small "?" icon during the puzzle itself, in case the child forgets.
+
+---
+
+## 5b. Module 2: Everyday Digital Safety (Post-MVP)
+
+Building on Module 1's password/phishing foundation, Module 2 covers broader digital-safety habits relevant to the target age group's actual device and gaming use.
+
+**Learning objectives:**
+1. Understand what a screen lock protects and why app permission requests (location, contacts, microphone) aren't always necessary just because an app asks.
+2. Understand that anything posted online can be seen by more people than intended and can be hard to fully take back — framed positively ("think before you post"), not as a scare tactic.
+3. Recognize scam patterns beyond email: fake "you won a prize" pop-ups, too-good-to-be-true in-game offers, and a "friend" account asking for gift card codes or account details.
+4. Recognize a specific, non-graphic set of grooming red-flag behaviors in game/chat contexts, and know the correct response is always to tell a trusted adult. This topic requires careful, age-appropriate handling — see the dedicated guidance below.
+5. Understand basic device hygiene: keeping apps/devices updated, and why downloading "free" things from random sites/links can be risky — kept simple and non-technical.
+
+**Proposed puzzle units (Module 2):**
+1. **"Lock It Up"** — Simple matching/sorting: what a screen lock protects vs. doesn't; which app permission requests make sense for a given app (e.g., a flashlight app asking for your contacts is a mismatch).
+2. **"Think Before You Post"** — Scenario-based: given an example fictional post, decide whether it's safe to share or should be rethought (e.g., posting a photo showing your school in the background).
+3. **"Too Good to Be True"** — Sort fictional offers/pop-ups into "safe" vs. "scam," reinforcing the phishing pattern-recognition from Module 1 across new formats (in-game offers, prize pop-ups).
+4. **"Who's Really There?"** — Gaming/chat safety unit (see dedicated guidance below).
+5. **"Keep It Updated"** — Simple explainer + light interaction on why updates and avoiding random downloads matter, kept very light-touch since this is the least urgent topic for this age group.
+
+**Dedicated guidance for the "Who's Really There?" unit (gaming/chat safety, grooming awareness):**
+- Content must stay entirely pattern-level, not narrative or graphic. No storyline depicting an actual grooming scenario in detail — instead, present a short list of behavior patterns as multiple-choice "is this a red flag?" checks: asking to keep a friendship secret from parents, asking to move the conversation to a different app, asking for photos, offering gifts/in-game currency in exchange for secrecy or personal info, or asking to meet in person.
+- Every scenario must resolve to the same single correct action: stop responding, don't delete the messages, and tell a trusted adult right away — including explicit reinforcement that this holds true *especially* if the other person said not to tell anyone.
+- Reinforce that this applies even to people who seem like genuine "friends" over time (trust built gradually is still a red flag pattern, not an exception to it), and that none of this is ever the child's fault.
+- Avoid any framing that could read as instructional to a bad-faith reader — this unit teaches recognition and the correct response, nothing about how such approaches are carried out.
+- Given the sensitivity of this topic, this unit's copy should be drafted conservatively and reviewed by the parent (you) before shipping, more so than any other unit in the app.
+
+---
+
+## 5c. Localization (English/Spanish)
+
+The app must support both English and Spanish within a single deployment (one URL, one codebase) via a language toggle button, following the same UI pattern as the existing sound-mute toggle (small, persistent icon button visible on every screen, defaults to a sensible starting language, choice persisted to localStorage).
+
+All user-facing text must be localized: unit titles/blurbs, puzzle intro screens, puzzle content and feedback/hint text, badge names/descriptions, and the Home screen copy. Puzzle *data* that is language-independent (e.g., which password is objectively weak vs. strong) stays the same across languages; only the displayed text changes.
+
+Fictional names/brands used in examples should have natural-sounding equivalents in each language rather than being awkwardly transliterated.
+
 ---
 
 ## 6. Functional Requirements
@@ -73,7 +112,12 @@ All email/website examples must use **entirely fictional brand names** — do no
 
 ## 7. Non-Functional / Design Requirements
 
-- **Visual style:** minimalist, clean, flat design. Muted/calm palette (soft blues, greens, warm neutrals) — avoid saturated "alarm" colors like red/black used heavily, since the tone should be empowering, not scary.
+**Revision note:** The original v1 direction (minimalist/flat, muted palette) was implemented and tested, but read as too plain and uninteresting for the target age group. The requirements below supersede the original palette/animation guidance; the underlying interaction logic, routing, and progress/badge persistence are unaffected.
+
+- **Visual style:** Vibrant and playful, but not chaotic or cartoon/mascot-driven. More saturated color palette than the original minimalist version, with color used meaningfully — e.g., a distinct accent color per puzzle unit on the progress path, and a warm celebratory palette for correct-answer and badge-unlock moments. Avoid saturated "alarm" colors like heavy red/black, since the tone should stay empowering, not scary.
+- **Micro-animations:** Short (150–400ms), snappy animations on key interactions — button press feedback, cards sliding/settling into place when sorted correctly, a gentle non-punitive "shake" nudge on incorrect answers, and a satisfying badge-unlock celebration (e.g. a burst/confetti effect, scale-and-glow on the badge icon).
+- **Sound:** Short (under 1 second), non-jarring sound effects for key moments — a soft positive chime for correct answers, a gentle neutral tone for incorrect ones, and a slightly bigger celebratory sound for badge unlocks. A mute/sound-toggle control must be visible on every screen, defaulting to ON.
+- **Motion/sound accessibility:** Respect the `prefers-reduced-motion` OS setting by reducing or skipping animations for users who have it enabled. Maintain accessible contrast ratios even with the more saturated palette.
 - **Typography:** rounded, highly legible sans-serif; large sizes (18px+ body text).
 - **Accessibility:** sufficient color contrast, no reliance on color alone to convey correct/incorrect (use icons/shapes too).
 - **No dark patterns:** no artificial urgency, no ads, no in-app purchases, no external links.
