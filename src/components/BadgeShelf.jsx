@@ -8,10 +8,10 @@ function BadgeCard({ badge, earned }) {
   return (
     <li
       className={[
-        'flex flex-col items-center gap-2 rounded-2xl border px-4 py-4 text-center min-w-[8rem] shadow-sm transition-shadow',
+        'flex flex-col items-center gap-2 rounded-2xl px-4 py-4 text-center min-w-[8rem] transition-shadow',
         earned
-          ? 'border-gold bg-gradient-to-b from-amber-50 to-white shadow-amber-200/60 hover:shadow-md'
-          : 'border-locked/70 bg-white',
+          ? 'border-2 border-gold-deep bg-gradient-to-br from-amber-300 to-gold-deep shadow-md shadow-amber-300/50 hover:shadow-lg'
+          : 'border border-locked/70 bg-white shadow-sm',
       ].join(' ')}
     >
       <span
@@ -26,10 +26,10 @@ function BadgeCard({ badge, earned }) {
           <LockIcon className="h-7 w-7" />
         )}
       </span>
-      <span className={`text-sm font-semibold ${earned ? 'text-ink' : 'text-ink-soft/70'}`}>
+      <span className={`text-sm font-bold ${earned ? 'text-ink' : 'text-ink-soft/70'}`}>
         {badge.name}
       </span>
-      <span className="text-xs text-ink-soft/70">
+      <span className={`text-xs ${earned ? 'text-ink/80' : 'text-ink-soft/70'}`}>
         {earned ? badge.description : `Finish ${unitCount} puzzles to unlock`}
       </span>
     </li>

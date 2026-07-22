@@ -8,7 +8,7 @@ export default function Home({ isUnitUnlocked, getUnitStars, earnedBadgeIds }) {
   return (
     <div className="mx-auto flex min-h-svh max-w-4xl flex-col gap-10 px-4 py-8 sm:px-6">
       <header className="text-center">
-        <h1 className="text-3xl font-bold text-ink sm:text-4xl">
+        <h1 className="bg-gradient-to-r from-sky-deep via-violet-600 to-pink-600 bg-clip-text text-5xl font-extrabold tracking-tight text-transparent sm:text-6xl">
           CyberQuest Jr.
         </h1>
         <p className="mt-2 text-lg text-ink-soft">

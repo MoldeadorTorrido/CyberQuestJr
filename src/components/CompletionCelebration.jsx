@@ -31,7 +31,7 @@ export default function CompletionCelebration({ stars, newlyEarnedBadgeId }) {
     >
       {badge && <ConfettiBurst />}
       <div className="relative z-10 flex flex-col items-center gap-4">
-        <h2 id="celebration-heading" className="text-2xl font-bold text-ink">
+        <h2 id="celebration-heading" className="text-3xl font-extrabold text-ink">
           Great job!
         </h2>
         <StarRating stars={stars} size="lg" />
@@ -60,7 +60,7 @@ export default function CompletionCelebration({ stars, newlyEarnedBadgeId }) {
         <button
           type="button"
           onClick={() => navigate('/')}
-          className="mt-2 min-h-11 w-full rounded-full bg-strong px-6 py-3 text-base font-semibold text-white transition-transform duration-150 hover:opacity-90 active:scale-95"
+          className="mt-2 min-h-11 w-full rounded-full border-b-4 border-strong-deep bg-strong px-6 py-3 text-base font-bold text-white transition-all duration-150 hover:brightness-105 active:translate-y-1 active:border-b-0"
         >
           Continue
         </button>

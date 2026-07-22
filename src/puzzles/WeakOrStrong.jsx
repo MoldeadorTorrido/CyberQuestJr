@@ -32,14 +32,14 @@ function PasswordCard({ item, onSort, hint, shaking, onShakeEnd }) {
         <button
           type="button"
           onClick={() => onSort(item.id, 'weak')}
-          className="min-h-11 flex-1 rounded-full border-2 border-weak px-3 py-2 text-sm font-semibold text-weak transition-transform duration-150 hover:bg-weak/10 active:scale-95"
+          className="min-h-11 flex-1 rounded-full border-b-4 border-weak-deep bg-weak px-3 py-2 text-base font-bold text-white transition-all duration-150 hover:brightness-105 active:translate-y-1 active:border-b-0"
         >
           Weak
         </button>
         <button
           type="button"
           onClick={() => onSort(item.id, 'strong')}
-          className="min-h-11 flex-1 rounded-full border-2 border-strong px-3 py-2 text-sm font-semibold text-strong transition-transform duration-150 hover:bg-strong/10 active:scale-95"
+          className="min-h-11 flex-1 rounded-full border-b-4 border-strong-deep bg-strong px-3 py-2 text-base font-bold text-white transition-all duration-150 hover:brightness-105 active:translate-y-1 active:border-b-0"
         >
           Strong
         </button>

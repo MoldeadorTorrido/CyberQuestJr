@@ -35,7 +35,7 @@ export function LockIcon({ className }) {
   )
 }
 
-export function CheckIcon({ className }) {
+export function CheckIcon({ className, strokeWidth = '2.4' }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -43,7 +43,7 @@ export function CheckIcon({ className }) {
       aria-hidden="true"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2.4"
+      strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
     >
