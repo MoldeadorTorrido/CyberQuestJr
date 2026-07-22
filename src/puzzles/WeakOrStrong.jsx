@@ -1,14 +1,39 @@
 import { useMemo, useState } from 'react'
 import PuzzleShell from '../components/PuzzleShell'
+import PuzzleIntroScreen from '../components/PuzzleIntroScreen'
+import HelpButton from '../components/HelpButton'
+import HelpModal from '../components/HelpModal'
 import CompletionCelebration from '../components/CompletionCelebration'
-import { CheckIcon, XIcon } from '../components/Icons'
+import { CheckIcon, LockIcon, XIcon } from '../components/Icons'
 import { WEAK_OR_STRONG_ITEMS } from '../data/weakOrStrongItems'
 import { useSound } from '../context/SoundContext'
+import { getUnitById } from '../data/units'
+
+const UNIT_COLOR = getUnitById('weak-or-strong').color
 
 function starsForMistakes(mistakes) {
   if (mistakes === 0) return 3
   if (mistakes <= 2) return 2
   return 1
+}
+
+function PasswordExplanation() {
+  return (
+    <>
+      <span
+        className="flex h-16 w-16 items-center justify-center rounded-full text-white"
+        style={{ backgroundColor: UNIT_COLOR }}
+      >
+        <LockIcon className="h-8 w-8" />
+      </span>
+      <h2 className="text-xl font-bold text-ink">What's a Password?</h2>
+      <p className="text-base text-ink-soft">
+        A password is like a secret word that only you know — kind of like a
+        special key to your own room. It keeps your accounts locked so only
+        you (and people you trust) can get in.
+      </p>
+    </>
+  )
 }
 
 function PasswordCard({ item, onSort, hint, shaking, onShakeEnd }) {
@@ -88,6 +113,8 @@ function BinList({ label, tone, items }) {
 
 export default function WeakOrStrong({ onComplete }) {
   const { playCorrect, playIncorrect } = useSound()
+  const [stage, setStage] = useState('intro') // 'intro' | 'playing'
+  const [showHelp, setShowHelp] = useState(false)
   const [placements, setPlacements] = useState({}) // id -> 'weak' | 'strong'
   const [hints, setHints] = useState({}) // id -> hint string (shown after a wrong guess)
   const [shakingId, setShakingId] = useState(null)
@@ -133,6 +160,14 @@ export default function WeakOrStrong({ onComplete }) {
     }
   }
 
+  if (stage === 'intro') {
+    return (
+      <PuzzleIntroScreen title="Weak or Strong?" onStart={() => setStage('playing')}>
+        <PasswordExplanation />
+      </PuzzleIntroScreen>
+    )
+  }
+
   if (result) {
     return (
       <CompletionCelebration
@@ -146,7 +181,13 @@ export default function WeakOrStrong({ onComplete }) {
     <PuzzleShell
       title="Weak or Strong?"
       instructions="Read each password. Decide if it's Weak or Strong, then tap your answer."
+      headerAction={<HelpButton onClick={() => setShowHelp(true)} />}
     >
+      {showHelp && (
+        <HelpModal onClose={() => setShowHelp(false)}>
+          <PasswordExplanation />
+        </HelpModal>
+      )}
       <div className="grid gap-4">
         {unsortedItems.length > 0 && (
           <ul className="grid gap-3 sm:grid-cols-2">

@@ -20,7 +20,7 @@ export const UNITS = [
     title: 'Build a Strong Password',
     blurb: 'Build a password and watch it get stronger.',
     badgeId: 'password-basics',
-    status: 'soon',
+    status: 'ready',
     color: '#7c3aed',
   },
   {

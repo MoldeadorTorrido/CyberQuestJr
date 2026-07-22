@@ -37,8 +37,8 @@ export default function CompletionCelebration({ stars, newlyEarnedBadgeId }) {
         <StarRating stars={stars} size="lg" />
         <p className="text-base text-ink-soft">
           {stars === 3
-            ? "You got every password right on the first try!"
-            : "You figured it out! You're getting better at spotting strong passwords."}
+            ? 'You nailed it on the first try!'
+            : "You got there! Keep practicing and you'll be a pro."}
         </p>
 
         {badge && (

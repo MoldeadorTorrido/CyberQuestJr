@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 
-export default function PuzzleShell({ title, instructions, children }) {
+export default function PuzzleShell({ title, instructions, headerAction, children }) {
   return (
     <div className="mx-auto flex min-h-svh max-w-3xl flex-col px-4 py-6 sm:px-6">
       <header className="mb-6 flex items-center gap-3">
@@ -11,12 +11,13 @@ export default function PuzzleShell({ title, instructions, children }) {
         >
           ←
         </Link>
-        <div>
+        <div className="flex-1">
           <h1 className="text-2xl font-bold text-ink sm:text-3xl">{title}</h1>
           {instructions && (
             <p className="mt-1 text-base text-ink-soft">{instructions}</p>
           )}
         </div>
+        {headerAction}
       </header>
       <main className="flex-1">{children}</main>
     </div>

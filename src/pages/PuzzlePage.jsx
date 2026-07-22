@@ -1,10 +1,12 @@
 import { Navigate, useParams } from 'react-router-dom'
 import { getUnitById } from '../data/units'
 import WeakOrStrong from '../puzzles/WeakOrStrong'
+import BuildAStrongPassword from '../puzzles/BuildAStrongPassword'
 import ComingSoon from '../puzzles/ComingSoon'
 
 const PUZZLE_COMPONENTS = {
   'weak-or-strong': WeakOrStrong,
+  'build-a-password': BuildAStrongPassword,
 }
 
 export default function PuzzlePage({ isUnitUnlocked, completeUnit }) {
