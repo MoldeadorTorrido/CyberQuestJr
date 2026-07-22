@@ -29,7 +29,7 @@ export const UNITS = [
     title: 'Spot the Phishing Email',
     blurb: 'Find the suspicious clues in a message.',
     badgeId: 'phishing-basics',
-    status: 'soon',
+    status: 'ready',
     color: '#d97706',
   },
   {
