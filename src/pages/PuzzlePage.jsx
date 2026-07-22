@@ -3,12 +3,14 @@ import { getUnitById } from '../data/units'
 import WeakOrStrong from '../puzzles/WeakOrStrong'
 import BuildAStrongPassword from '../puzzles/BuildAStrongPassword'
 import SpotThePhishingEmail from '../puzzles/SpotThePhishingEmail'
+import WhoCanITellMyPassword from '../puzzles/WhoCanITellMyPassword'
 import ComingSoon from '../puzzles/ComingSoon'
 
 const PUZZLE_COMPONENTS = {
   'weak-or-strong': WeakOrStrong,
   'build-a-password': BuildAStrongPassword,
   'spot-the-phishing-email': SpotThePhishingEmail,
+  'who-can-i-tell': WhoCanITellMyPassword,
 }
 
 export default function PuzzlePage({ isUnitUnlocked, completeUnit }) {

@@ -38,7 +38,7 @@ export const UNITS = [
     title: 'Who Can I Tell My Password To?',
     blurb: 'Pick the safe answer every time.',
     badgeId: 'phishing-basics',
-    status: 'soon',
+    status: 'ready',
     color: '#db2777',
   },
   {
