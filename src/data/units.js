@@ -47,7 +47,7 @@ export const UNITS = [
     title: 'Real or Fake Link?',
     blurb: 'Compare two web addresses.',
     badgeId: 'phishing-basics',
-    status: 'soon',
+    status: 'ready',
     color: '#0284c7',
   },
   {
