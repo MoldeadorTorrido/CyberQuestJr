@@ -6,7 +6,7 @@ export default function PuzzleShell({ title, instructions, children }) {
       <header className="mb-6 flex items-center gap-3">
         <Link
           to="/"
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-locked bg-white text-xl text-ink-soft hover:bg-sky/50"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-locked bg-white text-xl text-ink-soft transition-transform duration-150 hover:bg-sky/50 active:scale-95"
           aria-label="Back to path"
         >
           ←

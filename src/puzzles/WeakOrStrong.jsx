@@ -3,6 +3,7 @@ import PuzzleShell from '../components/PuzzleShell'
 import CompletionCelebration from '../components/CompletionCelebration'
 import { CheckIcon, XIcon } from '../components/Icons'
 import { WEAK_OR_STRONG_ITEMS } from '../data/weakOrStrongItems'
+import { useSound } from '../context/SoundContext'
 
 function starsForMistakes(mistakes) {
   if (mistakes === 0) return 3
@@ -10,9 +11,15 @@ function starsForMistakes(mistakes) {
   return 1
 }
 
-function PasswordCard({ item, onSort, hint }) {
+function PasswordCard({ item, onSort, hint, shaking, onShakeEnd }) {
   return (
-    <li className="rounded-2xl border border-locked/70 bg-white p-4">
+    <li
+      onAnimationEnd={onShakeEnd}
+      className={[
+        'rounded-2xl border border-locked/70 bg-white p-4 shadow-sm transition-shadow hover:shadow-md',
+        shaking ? 'animate-shake' : '',
+      ].join(' ')}
+    >
       <p className="mb-3 break-words rounded-xl bg-sand px-3 py-2 text-center font-mono text-lg text-ink">
         {item.password}
       </p>
@@ -25,14 +32,14 @@ function PasswordCard({ item, onSort, hint }) {
         <button
           type="button"
           onClick={() => onSort(item.id, 'weak')}
-          className="min-h-11 flex-1 rounded-full border-2 border-weak px-3 py-2 text-sm font-semibold text-weak hover:bg-weak/10"
+          className="min-h-11 flex-1 rounded-full border-2 border-weak px-3 py-2 text-sm font-semibold text-weak transition-transform duration-150 hover:bg-weak/10 active:scale-95"
         >
           Weak
         </button>
         <button
           type="button"
           onClick={() => onSort(item.id, 'strong')}
-          className="min-h-11 flex-1 rounded-full border-2 border-strong px-3 py-2 text-sm font-semibold text-strong hover:bg-strong/10"
+          className="min-h-11 flex-1 rounded-full border-2 border-strong px-3 py-2 text-sm font-semibold text-strong transition-transform duration-150 hover:bg-strong/10 active:scale-95"
         >
           Strong
         </button>
@@ -56,7 +63,10 @@ function BinList({ label, tone, items }) {
       ) : (
         <ul className="space-y-2">
           {items.map((item) => (
-            <li key={item.id} className="rounded-xl bg-white p-3">
+            <li
+              key={item.id}
+              className="animate-pop-in rounded-xl bg-white p-3 shadow-sm"
+            >
               <div className="mb-1 flex items-center gap-2">
                 {tone === 'weak' ? (
                   <XIcon className={`h-4 w-4 ${iconColor}`} />
@@ -77,8 +87,10 @@ function BinList({ label, tone, items }) {
 }
 
 export default function WeakOrStrong({ onComplete }) {
+  const { playCorrect, playIncorrect } = useSound()
   const [placements, setPlacements] = useState({}) // id -> 'weak' | 'strong'
   const [hints, setHints] = useState({}) // id -> hint string (shown after a wrong guess)
+  const [shakingId, setShakingId] = useState(null)
   const [mistakes, setMistakes] = useState(0)
   const [result, setResult] = useState(null) // { stars, newlyEarnedBadgeId }
 
@@ -96,6 +108,7 @@ export default function WeakOrStrong({ onComplete }) {
   const handleSort = (itemId, guess) => {
     const item = WEAK_OR_STRONG_ITEMS.find((i) => i.id === itemId)
     if (item.answer === guess) {
+      playCorrect()
       const nextPlacements = { ...placements, [itemId]: guess }
       setPlacements(nextPlacements)
       setHints((prev) => {
@@ -113,8 +126,10 @@ export default function WeakOrStrong({ onComplete }) {
         setResult({ stars, newlyEarnedBadgeId })
       }
     } else {
+      playIncorrect()
       setMistakes((m) => m + 1)
       setHints((prev) => ({ ...prev, [itemId]: item.hint }))
+      setShakingId(itemId)
     }
   }
 
@@ -141,6 +156,10 @@ export default function WeakOrStrong({ onComplete }) {
                 item={item}
                 hint={hints[item.id]}
                 onSort={handleSort}
+                shaking={shakingId === item.id}
+                onShakeEnd={() =>
+                  setShakingId((current) => (current === item.id ? null : current))
+                }
               />
             ))}
           </ul>

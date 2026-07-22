@@ -1,6 +1,9 @@
 // Module 1: Passwords & Phishing Awareness — the six puzzle units from spec section 5.
 // `status: 'ready'` units have a real puzzle component; `'soon'` units render a
 // friendly placeholder but still occupy their slot on the progress path.
+// Each unit gets its own accent color so the path reads as a row of distinct
+// puzzles rather than one repeated shape. Colors are picked from the ~600
+// shade range so they stay readable as text/icon color directly on white.
 export const UNITS = [
   {
     id: 'weak-or-strong',
@@ -9,6 +12,7 @@ export const UNITS = [
     blurb: 'Sort passwords into Weak or Strong.',
     badgeId: 'password-basics',
     status: 'ready',
+    color: '#0d9488',
   },
   {
     id: 'build-a-password',
@@ -17,6 +21,7 @@ export const UNITS = [
     blurb: 'Build a password and watch it get stronger.',
     badgeId: 'password-basics',
     status: 'soon',
+    color: '#7c3aed',
   },
   {
     id: 'spot-the-phishing-email',
@@ -25,6 +30,7 @@ export const UNITS = [
     blurb: 'Find the suspicious clues in a message.',
     badgeId: 'phishing-basics',
     status: 'soon',
+    color: '#d97706',
   },
   {
     id: 'who-can-i-tell',
@@ -33,6 +39,7 @@ export const UNITS = [
     blurb: 'Pick the safe answer every time.',
     badgeId: 'phishing-basics',
     status: 'soon',
+    color: '#db2777',
   },
   {
     id: 'real-or-fake-link',
@@ -41,6 +48,7 @@ export const UNITS = [
     blurb: 'Compare two web addresses.',
     badgeId: 'phishing-basics',
     status: 'soon',
+    color: '#0284c7',
   },
   {
     id: 'what-would-you-do',
@@ -49,6 +57,7 @@ export const UNITS = [
     blurb: 'Choose the safe next step.',
     badgeId: 'phishing-basics',
     status: 'soon',
+    color: '#4f46e5',
   },
 ]
 

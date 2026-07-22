@@ -105,6 +105,43 @@ export function MagnifierIcon({ className }) {
   )
 }
 
+export function SpeakerOnIcon({ className }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 9.5v5h3.5L12 18V6L7.5 9.5z" />
+      <path d="M16.5 9a4 4 0 0 1 0 6" />
+      <path d="M19 6.5a7.5 7.5 0 0 1 0 11" />
+    </svg>
+  )
+}
+
+export function SpeakerOffIcon({ className }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 9.5v5h3.5L12 18V6L7.5 9.5z" />
+      <path d="M16 9.5l4.5 5M20.5 9.5l-4.5 5" />
+    </svg>
+  )
+}
+
 export const BADGE_ICONS = {
   shield: ShieldIcon,
   magnifier: MagnifierIcon,

@@ -5,16 +5,18 @@
     ui-rounded, 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue',
     sans-serif;
 
-  --color-sky: #eaf4fb;
-  --color-sky-deep: #7fb8dd;
-  --color-leaf: #e7f3ea;
-  --color-leaf-deep: #6fbf8b;
-  --color-sand: #faf6ee;
-  --color-ink: #33404a;
-  --color-ink-soft: #5b6b76;
-  --color-strong: #4f9d6e;
-  --color-weak: #c97b3b;
-  --color-locked: #cfd8dd;
+  --color-sky: #e4f1fc;
+  --color-sky-deep: #0284c7;
+  --color-leaf: #e9f8ef;
+  --color-leaf-deep: #059669;
+  --color-sand: #fff7ec;
+  --color-ink: #2a2340;
+  --color-ink-soft: #5a5170;
+  --color-strong: #059669;
+  --color-weak: #ea580c;
+  --color-locked: #c7cedd;
+  --color-gold: #f59e0b;
+  --color-gold-deep: #d97706;
 }
 
 html {
@@ -35,4 +37,94 @@ body {
 :focus-visible {
   outline: 3px solid var(--color-sky-deep);
   outline-offset: 2px;
+}
+
+/* Micro-animations */
+
+@keyframes shake {
+  10%,
+  90% {
+    transform: translateX(-1px);
+  }
+  20%,
+  80% {
+    transform: translateX(2px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-4px);
+  }
+  40%,
+  60% {
+    transform: translateX(4px);
+  }
+}
+.animate-shake {
+  animation: shake 400ms ease-in-out;
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(4px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.04) translateY(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.animate-pop-in {
+  animation: pop-in 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes badge-glow {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+    box-shadow: 0 0 0 rgba(245, 158, 11, 0);
+  }
+  55% {
+    transform: scale(1.12);
+    opacity: 1;
+    box-shadow: 0 0 26px 8px rgba(245, 158, 11, 0.5);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 16px 3px rgba(245, 158, 11, 0.32);
+  }
+}
+.animate-badge-glow {
+  animation: badge-glow 600ms cubic-bezier(0.22, 1, 0.36, 1) 150ms both;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--x-drift), 150px) rotate(var(--rot));
+    opacity: 0;
+  }
+}
+.animate-confetti {
+  animation-name: confetti-fall;
+  animation-duration: var(--duration, 900ms);
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

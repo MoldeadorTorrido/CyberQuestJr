@@ -4,17 +4,26 @@ import StarRating from './StarRating'
 
 function UnitNode({ unit, unlocked, completed, stars }) {
   const baseClasses =
-    'group flex flex-col items-center gap-2 rounded-2xl px-3 py-3 min-w-[6.5rem] transition focus-visible:outline-offset-4'
+    'group flex flex-col items-center gap-2 rounded-2xl px-3 py-3 min-w-[6.5rem] transition-transform duration-150 focus-visible:outline-offset-4'
+
+  // Unlocked-but-incomplete units get their own accent color so the path
+  // reads as distinct puzzles; completed always shows the same success green
+  // so "done" stays a single, unambiguous signal.
+  const circleStyle =
+    unlocked && !completed
+      ? { borderColor: unit.color, color: unit.color, backgroundColor: `${unit.color}1A` }
+      : undefined
 
   const content = (
     <>
       <span
+        style={circleStyle}
         className={[
-          'flex h-14 w-14 items-center justify-center rounded-full border-2 text-lg font-semibold',
+          'flex h-14 w-14 items-center justify-center rounded-full border-2 text-lg font-semibold transition-colors',
           completed
             ? 'border-strong bg-leaf text-strong'
             : unlocked
-              ? 'border-sky-deep bg-white text-sky-deep group-hover:bg-sky'
+              ? ''
               : 'border-locked bg-white text-locked',
         ].join(' ')}
       >
@@ -58,7 +67,7 @@ function UnitNode({ unit, unlocked, completed, stars }) {
   return (
     <Link
       to={`/unit/${unit.id}`}
-      className={`${baseClasses} hover:bg-sky/60 active:scale-[0.98]`}
+      className={`${baseClasses} hover:-translate-y-0.5 hover:bg-sky/40 active:scale-95 active:translate-y-0`}
     >
       {content}
     </Link>

@@ -8,16 +8,16 @@ function BadgeCard({ badge, earned }) {
   return (
     <li
       className={[
-        'flex flex-col items-center gap-2 rounded-2xl border px-4 py-4 text-center min-w-[8rem]',
+        'flex flex-col items-center gap-2 rounded-2xl border px-4 py-4 text-center min-w-[8rem] shadow-sm transition-shadow',
         earned
-          ? 'border-leaf-deep bg-leaf'
+          ? 'border-gold bg-gradient-to-b from-amber-50 to-white shadow-amber-200/60 hover:shadow-md'
           : 'border-locked/70 bg-white',
       ].join(' ')}
     >
       <span
         className={[
           'flex h-16 w-16 items-center justify-center rounded-full',
-          earned ? 'bg-white text-strong' : 'bg-sand text-locked',
+          earned ? 'bg-white text-gold-deep' : 'bg-sand text-locked',
         ].join(' ')}
       >
         {earned ? (
