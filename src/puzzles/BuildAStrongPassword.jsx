@@ -8,18 +8,38 @@ import { ShieldIcon } from '../components/Icons'
 import { UPGRADES, BASE_WORD, SUFFIX_WORD } from '../data/buildPasswordContent'
 import { useSound } from '../context/SoundContext'
 import { getUnitById } from '../data/units'
+import { pick } from '../i18n/LanguageContext'
+import { useTranslation } from '../i18n/strings'
 
 const UNIT_COLOR = getUnitById('build-a-password').color
 const STRENGTH_RANK = { weak: 0, medium: 1, strong: 2 }
 const STRENGTH_STEPS = [
-  { level: 'weak', label: 'Weak', color: 'var(--color-weak)' },
-  { level: 'medium', label: 'Medium', color: 'var(--color-gold-deep)' },
-  { level: 'strong', label: 'Strong', color: 'var(--color-strong)' },
+  { level: 'weak', color: 'var(--color-weak)' },
+  { level: 'medium', color: 'var(--color-gold-deep)' },
+  { level: 'strong', color: 'var(--color-strong)' },
 ]
 
-function buildDisplayPassword(active) {
-  const chunks = [BASE_WORD]
-  if (active.longer) chunks.push(SUFFIX_WORD)
+const TEXT = {
+  title: { en: 'Build a Strong Password', es: 'Crea una Contraseña Fuerte' },
+  introHeading: {
+    en: 'What Makes a Password Strong?',
+    es: '¿Qué Hace Fuerte a una Contraseña?',
+  },
+  introBody: {
+    en: 'A strong password is long and mixes in capital letters, numbers, and symbols instead of just a plain word. The more you mix in, the harder it is for anyone else to guess!',
+    es: 'Una contraseña fuerte es larga y combina mayúsculas, números y símbolos en lugar de ser solo una palabra simple. ¡Mientras más mezcles, más difícil será para los demás adivinarla!',
+  },
+  instructions: {
+    en: 'Tap the upgrades below to make this password stronger.',
+    es: 'Toca las mejoras de abajo para hacer esta contraseña más fuerte.',
+  },
+  strongAnnouncement: { en: 'Your password is strong!', es: '¡Tu contraseña es fuerte!' },
+  imDone: { en: "I'm done!", es: '¡Listo!' },
+}
+
+function buildDisplayPassword(active, lang) {
+  const chunks = [pick(BASE_WORD, lang)]
+  if (active.longer) chunks.push(pick(SUFFIX_WORD, lang))
 
   let word = chunks
     .map((chunk) => (active.capital ? chunk[0].toUpperCase() + chunk.slice(1) : chunk))
@@ -43,7 +63,7 @@ function starsForToggleOffs(toggleOffCount) {
   return 1
 }
 
-function BuildPasswordExplanation() {
+function BuildPasswordExplanation({ lang }) {
   return (
     <>
       <span
@@ -52,17 +72,13 @@ function BuildPasswordExplanation() {
       >
         <ShieldIcon className="h-8 w-8" />
       </span>
-      <h2 className="text-xl font-bold text-ink">What Makes a Password Strong?</h2>
-      <p className="text-base text-ink-soft">
-        A strong password is long and mixes in capital letters, numbers, and
-        symbols instead of just a plain word. The more you mix in, the harder
-        it is for anyone else to guess!
-      </p>
+      <h2 className="text-xl font-bold text-ink">{pick(TEXT.introHeading, lang)}</h2>
+      <p className="text-base text-ink-soft">{pick(TEXT.introBody, lang)}</p>
     </>
   )
 }
 
-function StrengthMeter({ level }) {
+function StrengthMeter({ level, t }) {
   const activeIndex = STRENGTH_STEPS.findIndex((step) => step.level === level)
   const current = STRENGTH_STEPS[activeIndex]
 
@@ -80,7 +96,7 @@ function StrengthMeter({ level }) {
       {/* Keying on level forces a remount, replaying the pop-in animation
           every time the strength meter moves to a new step. */}
       <p key={level} className="animate-pop-in text-sm font-bold" style={{ color: current.color }}>
-        {current.label}
+        {t(level)}
       </p>
     </div>
   )
@@ -88,6 +104,7 @@ function StrengthMeter({ level }) {
 
 export default function BuildAStrongPassword({ onComplete }) {
   const { playCorrect } = useSound()
+  const { t, lang } = useTranslation()
   const [stage, setStage] = useState('intro') // 'intro' | 'playing'
   const [showHelp, setShowHelp] = useState(false)
   const [active, setActive] = useState({
@@ -100,7 +117,7 @@ export default function BuildAStrongPassword({ onComplete }) {
   const [result, setResult] = useState(null) // { stars, newlyEarnedBadgeId }
 
   const level = strengthLevel(active)
-  const password = buildDisplayPassword(active)
+  const password = buildDisplayPassword(active, lang)
 
   const handleToggle = (id) => {
     setActive((prev) => {
@@ -121,10 +138,12 @@ export default function BuildAStrongPassword({ onComplete }) {
     setResult({ stars, newlyEarnedBadgeId })
   }
 
+  const title = pick(TEXT.title, lang)
+
   if (stage === 'intro') {
     return (
-      <PuzzleIntroScreen title="Build a Strong Password" onStart={() => setStage('playing')}>
-        <BuildPasswordExplanation />
+      <PuzzleIntroScreen title={title} onStart={() => setStage('playing')}>
+        <BuildPasswordExplanation lang={lang} />
       </PuzzleIntroScreen>
     )
   }
@@ -140,13 +159,13 @@ export default function BuildAStrongPassword({ onComplete }) {
 
   return (
     <PuzzleShell
-      title="Build a Strong Password"
-      instructions="Tap the upgrades below to make this password stronger."
+      title={title}
+      instructions={pick(TEXT.instructions, lang)}
       headerAction={<HelpButton onClick={() => setShowHelp(true)} />}
     >
       {showHelp && (
         <HelpModal onClose={() => setShowHelp(false)}>
-          <BuildPasswordExplanation />
+          <BuildPasswordExplanation lang={lang} />
         </HelpModal>
       )}
 
@@ -155,7 +174,7 @@ export default function BuildAStrongPassword({ onComplete }) {
           {password}
         </p>
 
-        <StrengthMeter level={level} />
+        <StrengthMeter level={level} t={t} />
 
         <ul className="grid gap-3 sm:grid-cols-2">
           {UPGRADES.map((upgrade) => {
@@ -174,7 +193,7 @@ export default function BuildAStrongPassword({ onComplete }) {
                       : 'border-2 border-locked bg-white text-ink-soft hover:bg-sky/30',
                   ].join(' ')}
                 >
-                  {upgrade.label}
+                  {pick(upgrade.label, lang)}
                 </button>
               </li>
             )
@@ -184,14 +203,14 @@ export default function BuildAStrongPassword({ onComplete }) {
         {level === 'strong' && (
           <div className="animate-pop-in flex flex-col items-center gap-3 rounded-2xl border border-strong/60 bg-strong/5 px-4 py-4 text-center">
             <p className="text-sm font-semibold text-strong">
-              Your password is strong!
+              {pick(TEXT.strongAnnouncement, lang)}
             </p>
             <button
               type="button"
               onClick={handleConfirm}
               className="min-h-11 w-full rounded-full border-b-4 border-strong-deep bg-strong px-6 py-3 text-base font-bold text-white transition-all duration-150 hover:brightness-105 active:translate-y-1 active:border-b-0"
             >
-              I'm done!
+              {pick(TEXT.imDone, lang)}
             </button>
           </div>
         )}

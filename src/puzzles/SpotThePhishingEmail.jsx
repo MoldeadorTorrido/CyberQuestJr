@@ -8,9 +8,24 @@ import { CheckIcon, MagnifierIcon, XIcon } from '../components/Icons'
 import { EMAIL_SEGMENTS } from '../data/phishingEmailContent'
 import { useSound } from '../context/SoundContext'
 import { getUnitById } from '../data/units'
+import { pick } from '../i18n/LanguageContext'
+import { interpolate, useTranslation } from '../i18n/strings'
 
 const UNIT_COLOR = getUnitById('spot-the-phishing-email').color
 const SUSPICIOUS_COUNT = EMAIL_SEGMENTS.filter((s) => s.suspicious).length
+
+const TEXT = {
+  title: { en: 'Spot the Phishing Email', es: 'Detecta el Correo Falso' },
+  introHeading: { en: "What's Phishing?", es: '¿Qué es el Phishing?' },
+  introBody: {
+    en: "Sometimes a trick message pretends to be from someone you trust, hoping you'll click without thinking. Watch for messages that rush you, promise a surprise prize, or ask for your password — real friends and real companies won't do that!",
+    es: 'A veces un mensaje engañoso finge ser de alguien en quien confías, esperando que hagas clic sin pensar. Ten cuidado con mensajes que te apuran, prometen un premio sorpresa o piden tu contraseña — ¡los amigos y las empresas de verdad no hacen eso!',
+  },
+  instructions: {
+    en: 'Tap the parts of the email that seem suspicious. Found {found} of {total}.',
+    es: 'Toca las partes del correo que parezcan sospechosas. Encontraste {found} de {total}.',
+  },
+}
 
 function starsForMistakes(mistakes) {
   if (mistakes === 0) return 3
@@ -18,7 +33,7 @@ function starsForMistakes(mistakes) {
   return 1
 }
 
-function PhishingExplanation() {
+function PhishingExplanation({ lang }) {
   return (
     <>
       <span
@@ -27,18 +42,13 @@ function PhishingExplanation() {
       >
         <MagnifierIcon className="h-8 w-8" />
       </span>
-      <h2 className="text-xl font-bold text-ink">What's Phishing?</h2>
-      <p className="text-base text-ink-soft">
-        Sometimes a trick message pretends to be from someone you trust,
-        hoping you'll click without thinking. Watch for messages that rush
-        you, promise a surprise prize, or ask for your password — real
-        friends and real companies won't do that!
-      </p>
+      <h2 className="text-xl font-bold text-ink">{pick(TEXT.introHeading, lang)}</h2>
+      <p className="text-base text-ink-soft">{pick(TEXT.introBody, lang)}</p>
     </>
   )
 }
 
-function EmailSegment({ segment, status, shaking, onTap, onShakeEnd }) {
+function EmailSegment({ segment, status, shaking, onTap, onShakeEnd, lang }) {
   // status: 'unresolved' | 'found' | 'revealed-safe'
   const isResolved = status !== 'unresolved'
 
@@ -62,14 +72,14 @@ function EmailSegment({ segment, status, shaking, onTap, onShakeEnd }) {
           <CheckIcon className="mt-0.5 h-5 w-5 shrink-0 text-sky-deep" />
         )}
         <span className={segment.section === 'header' ? 'font-mono text-sm' : ''}>
-          {segment.text}
+          {pick(segment.text, lang)}
         </span>
       </button>
       {isResolved && (
         <p
           className={`mt-1 px-4 text-sm ${status === 'found' ? 'text-weak' : 'text-sky-deep'}`}
         >
-          {segment.reason}
+          {pick(segment.reason, lang)}
         </p>
       )}
     </li>
@@ -78,6 +88,7 @@ function EmailSegment({ segment, status, shaking, onTap, onShakeEnd }) {
 
 export default function SpotThePhishingEmail({ onComplete }) {
   const { playCorrect, playIncorrect } = useSound()
+  const { lang } = useTranslation()
   const [stage, setStage] = useState('intro') // 'intro' | 'playing'
   const [showHelp, setShowHelp] = useState(false)
   const [foundIds, setFoundIds] = useState([])
@@ -112,10 +123,12 @@ export default function SpotThePhishingEmail({ onComplete }) {
     }
   }
 
+  const title = pick(TEXT.title, lang)
+
   if (stage === 'intro') {
     return (
-      <PuzzleIntroScreen title="Spot the Phishing Email" onStart={() => setStage('playing')}>
-        <PhishingExplanation />
+      <PuzzleIntroScreen title={title} onStart={() => setStage('playing')}>
+        <PhishingExplanation lang={lang} />
       </PuzzleIntroScreen>
     )
   }
@@ -134,13 +147,16 @@ export default function SpotThePhishingEmail({ onComplete }) {
 
   return (
     <PuzzleShell
-      title="Spot the Phishing Email"
-      instructions={`Tap the parts of the email that seem suspicious. Found ${foundIds.length} of ${SUSPICIOUS_COUNT}.`}
+      title={title}
+      instructions={interpolate(pick(TEXT.instructions, lang), {
+        found: foundIds.length,
+        total: SUSPICIOUS_COUNT,
+      })}
       headerAction={<HelpButton onClick={() => setShowHelp(true)} />}
     >
       {showHelp && (
         <HelpModal onClose={() => setShowHelp(false)}>
-          <PhishingExplanation />
+          <PhishingExplanation lang={lang} />
         </HelpModal>
       )}
 
@@ -156,6 +172,7 @@ export default function SpotThePhishingEmail({ onComplete }) {
               onShakeEnd={() =>
                 setShakingId((current) => (current === segment.id ? null : current))
               }
+              lang={lang}
             />
           ))}
         </ul>
@@ -170,6 +187,7 @@ export default function SpotThePhishingEmail({ onComplete }) {
               onShakeEnd={() =>
                 setShakingId((current) => (current === segment.id ? null : current))
               }
+              lang={lang}
             />
           ))}
         </ul>

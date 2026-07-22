@@ -1,7 +1,11 @@
+import { useTranslation } from '../i18n/strings'
+
 // Re-opens the same explanation shown on the puzzle's intro screen, without
 // losing puzzle progress. Reuses the pop-in keyframe already defined for
 // bin items so no new CSS is needed.
 export default function HelpModal({ onClose, children }) {
+  const { t } = useTranslation()
+
   return (
     <div
       role="dialog"
@@ -15,7 +19,7 @@ export default function HelpModal({ onClose, children }) {
           onClick={onClose}
           className="min-h-11 w-full rounded-full border-b-4 border-strong-deep bg-strong px-6 py-3 text-base font-bold text-white transition-all duration-150 hover:brightness-105 active:translate-y-1 active:border-b-0"
         >
-          Got it!
+          {t('gotIt')}
         </button>
       </div>
     </div>

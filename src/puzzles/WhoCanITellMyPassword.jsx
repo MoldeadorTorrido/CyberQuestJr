@@ -8,8 +8,23 @@ import { CheckIcon, ShieldIcon } from '../components/Icons'
 import { SCENARIOS } from '../data/passwordSharingScenarios'
 import { useSound } from '../context/SoundContext'
 import { getUnitById } from '../data/units'
+import { pick } from '../i18n/LanguageContext'
+import { interpolate, useTranslation } from '../i18n/strings'
 
 const UNIT_COLOR = getUnitById('who-can-i-tell').color
+
+const TEXT = {
+  title: { en: 'Who Can I Tell My Password To?', es: '¿A Quién Le Digo Mi Contraseña?' },
+  introHeading: { en: 'Who Gets Your Password?', es: '¿Quién Recibe Tu Contraseña?' },
+  introBody: {
+    en: "Never share your password — not with a friend, and not with anyone who says they're from a company or a game. The only person you can tell is a parent or grown-up you trust. If someone else asks, that's a sign something's not right!",
+    es: 'Nunca compartas tu contraseña — ni con un amigo, ni con nadie que diga ser de una empresa o de un juego. La única persona a quien puedes decírsela es a un papá, mamá o adulto de confianza. Si alguien más te la pide, ¡esa es una señal de que algo no está bien!',
+  },
+  instructions: {
+    en: 'Question {n} of {total}. Pick the safe choice.',
+    es: 'Pregunta {n} de {total}. Elige la opción segura.',
+  },
+}
 
 function starsForMistakes(mistakes) {
   if (mistakes === 0) return 3
@@ -17,7 +32,7 @@ function starsForMistakes(mistakes) {
   return 1
 }
 
-function SharingExplanation() {
+function SharingExplanation({ lang }) {
   return (
     <>
       <span
@@ -26,19 +41,15 @@ function SharingExplanation() {
       >
         <ShieldIcon className="h-8 w-8" />
       </span>
-      <h2 className="text-xl font-bold text-ink">Who Gets Your Password?</h2>
-      <p className="text-base text-ink-soft">
-        Never share your password — not with a friend, and not with anyone
-        who says they're from a company or a game. The only person you can
-        tell is a parent or grown-up you trust. If someone else asks, that's
-        a sign something's not right!
-      </p>
+      <h2 className="text-xl font-bold text-ink">{pick(TEXT.introHeading, lang)}</h2>
+      <p className="text-base text-ink-soft">{pick(TEXT.introBody, lang)}</p>
     </>
   )
 }
 
 export default function WhoCanITellMyPassword({ onComplete }) {
   const { playCorrect, playIncorrect } = useSound()
+  const { t, lang } = useTranslation()
   const [stage, setStage] = useState('intro') // 'intro' | 'playing'
   const [showHelp, setShowHelp] = useState(false)
   const [scenarioIndex, setScenarioIndex] = useState(0)
@@ -74,10 +85,12 @@ export default function WhoCanITellMyPassword({ onComplete }) {
     setSelectedOptionId(null)
   }
 
+  const title = pick(TEXT.title, lang)
+
   if (stage === 'intro') {
     return (
-      <PuzzleIntroScreen title="Who Can I Tell My Password To?" onStart={() => setStage('playing')}>
-        <SharingExplanation />
+      <PuzzleIntroScreen title={title} onStart={() => setStage('playing')}>
+        <SharingExplanation lang={lang} />
       </PuzzleIntroScreen>
     )
   }
@@ -93,19 +106,22 @@ export default function WhoCanITellMyPassword({ onComplete }) {
 
   return (
     <PuzzleShell
-      title="Who Can I Tell My Password To?"
-      instructions={`Question ${scenarioIndex + 1} of ${SCENARIOS.length}. Pick the safe choice.`}
+      title={title}
+      instructions={interpolate(pick(TEXT.instructions, lang), {
+        n: scenarioIndex + 1,
+        total: SCENARIOS.length,
+      })}
       headerAction={<HelpButton onClick={() => setShowHelp(true)} />}
     >
       {showHelp && (
         <HelpModal onClose={() => setShowHelp(false)}>
-          <SharingExplanation />
+          <SharingExplanation lang={lang} />
         </HelpModal>
       )}
 
       <div className="mx-auto flex max-w-lg flex-col gap-6">
         <p className="rounded-2xl border border-locked/70 bg-white px-5 py-4 text-lg text-ink shadow-sm">
-          {scenario.prompt}
+          {pick(scenario.prompt, lang)}
         </p>
 
         <ul className="flex flex-col gap-3">
@@ -133,7 +149,7 @@ export default function WhoCanITellMyPassword({ onComplete }) {
                   ].join(' ')}
                 >
                   {isCorrectSelected && <CheckIcon className="h-5 w-5 shrink-0 text-strong" />}
-                  {option.label}
+                  {pick(option.label, lang)}
                 </button>
               </li>
             )
@@ -142,13 +158,13 @@ export default function WhoCanITellMyPassword({ onComplete }) {
 
         {answeredCorrectly && (
           <div className="animate-pop-in flex flex-col items-center gap-3 rounded-2xl border border-strong/60 bg-strong/5 px-4 py-4 text-center">
-            <p className="text-sm text-ink">{scenario.reason}</p>
+            <p className="text-sm text-ink">{pick(scenario.reason, lang)}</p>
             <button
               type="button"
               onClick={handleNext}
               className="min-h-11 w-full rounded-full border-b-4 border-strong-deep bg-strong px-6 py-3 text-base font-bold text-white transition-all duration-150 hover:brightness-105 active:translate-y-1 active:border-b-0"
             >
-              {scenarioIndex === SCENARIOS.length - 1 ? 'Finish' : 'Next'}
+              {scenarioIndex === SCENARIOS.length - 1 ? t('finish') : t('next')}
             </button>
           </div>
         )}

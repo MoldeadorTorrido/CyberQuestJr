@@ -8,8 +8,23 @@ import { CheckIcon, MagnifierIcon } from '../components/Icons'
 import { ROUNDS } from '../data/linkComparisonRounds'
 import { useSound } from '../context/SoundContext'
 import { getUnitById } from '../data/units'
+import { pick } from '../i18n/LanguageContext'
+import { interpolate, useTranslation } from '../i18n/strings'
 
 const UNIT_COLOR = getUnitById('real-or-fake-link').color
+
+const TEXT = {
+  title: { en: 'Real or Fake Link?', es: '¿Enlace Real o Falso?' },
+  introHeading: { en: 'Real or Fake Link?', es: '¿Enlace Real o Falso?' },
+  introBody: {
+    en: 'Web addresses can be tricked to look almost like the real thing — with extra words, swapped letters, or a different ending. Always look closely before you click. If something looks a little different, it might not be safe!',
+    es: 'Las direcciones web pueden alterarse para parecerse casi a las reales — con palabras extra, letras cambiadas o una terminación diferente. Mira siempre con atención antes de hacer clic. ¡Si algo se ve un poco diferente, podría no ser seguro!',
+  },
+  instructions: {
+    en: 'Round {n} of {total}. Tap the address that looks altered.',
+    es: 'Ronda {n} de {total}. Toca la dirección que parece alterada.',
+  },
+}
 
 function starsForMistakes(mistakes) {
   if (mistakes === 0) return 3
@@ -17,7 +32,7 @@ function starsForMistakes(mistakes) {
   return 1
 }
 
-function LinkExplanation() {
+function LinkExplanation({ lang }) {
   return (
     <>
       <span
@@ -26,19 +41,15 @@ function LinkExplanation() {
       >
         <MagnifierIcon className="h-8 w-8" />
       </span>
-      <h2 className="text-xl font-bold text-ink">Real or Fake Link?</h2>
-      <p className="text-base text-ink-soft">
-        Web addresses can be tricked to look almost like the real thing —
-        with extra words, swapped letters, or a different ending. Always
-        look closely before you click. If something looks a little
-        different, it might not be safe!
-      </p>
+      <h2 className="text-xl font-bold text-ink">{pick(TEXT.introHeading, lang)}</h2>
+      <p className="text-base text-ink-soft">{pick(TEXT.introBody, lang)}</p>
     </>
   )
 }
 
 export default function RealOrFakeLink({ onComplete }) {
   const { playCorrect, playIncorrect } = useSound()
+  const { t, lang } = useTranslation()
   const [stage, setStage] = useState('intro') // 'intro' | 'playing'
   const [showHelp, setShowHelp] = useState(false)
   const [roundIndex, setRoundIndex] = useState(0)
@@ -74,10 +85,12 @@ export default function RealOrFakeLink({ onComplete }) {
     setSelectedOptionId(null)
   }
 
+  const title = pick(TEXT.title, lang)
+
   if (stage === 'intro') {
     return (
-      <PuzzleIntroScreen title="Real or Fake Link?" onStart={() => setStage('playing')}>
-        <LinkExplanation />
+      <PuzzleIntroScreen title={title} onStart={() => setStage('playing')}>
+        <LinkExplanation lang={lang} />
       </PuzzleIntroScreen>
     )
   }
@@ -93,13 +106,16 @@ export default function RealOrFakeLink({ onComplete }) {
 
   return (
     <PuzzleShell
-      title="Real or Fake Link?"
-      instructions={`Round ${roundIndex + 1} of ${ROUNDS.length}. Tap the address that looks altered.`}
+      title={title}
+      instructions={interpolate(pick(TEXT.instructions, lang), {
+        n: roundIndex + 1,
+        total: ROUNDS.length,
+      })}
       headerAction={<HelpButton onClick={() => setShowHelp(true)} />}
     >
       {showHelp && (
         <HelpModal onClose={() => setShowHelp(false)}>
-          <LinkExplanation />
+          <LinkExplanation lang={lang} />
         </HelpModal>
       )}
 
@@ -138,13 +154,13 @@ export default function RealOrFakeLink({ onComplete }) {
 
         {answeredCorrectly && (
           <div className="animate-pop-in flex flex-col items-center gap-3 rounded-2xl border border-strong/60 bg-strong/5 px-4 py-4 text-center">
-            <p className="text-sm text-ink">{round.reason}</p>
+            <p className="text-sm text-ink">{pick(round.reason, lang)}</p>
             <button
               type="button"
               onClick={handleNext}
               className="min-h-11 w-full rounded-full border-b-4 border-strong-deep bg-strong px-6 py-3 text-base font-bold text-white transition-all duration-150 hover:brightness-105 active:translate-y-1 active:border-b-0"
             >
-              {roundIndex === ROUNDS.length - 1 ? 'Finish' : 'Next'}
+              {roundIndex === ROUNDS.length - 1 ? t('finish') : t('next')}
             </button>
           </div>
         )}

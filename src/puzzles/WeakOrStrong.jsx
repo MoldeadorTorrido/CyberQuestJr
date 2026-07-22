@@ -8,8 +8,26 @@ import { CheckIcon, LockIcon, XIcon } from '../components/Icons'
 import { WEAK_OR_STRONG_ITEMS } from '../data/weakOrStrongItems'
 import { useSound } from '../context/SoundContext'
 import { getUnitById } from '../data/units'
+import { pick } from '../i18n/LanguageContext'
+import { useTranslation } from '../i18n/strings'
 
 const UNIT_COLOR = getUnitById('weak-or-strong').color
+
+const TEXT = {
+  title: { en: 'Weak or Strong?', es: '¿Débil o Fuerte?' },
+  introHeading: { en: "What's a Password?", es: '¿Qué es una Contraseña?' },
+  introBody: {
+    en: 'A password is like a secret word that only you know — kind of like a special key to your own room. It keeps your accounts locked so only you (and people you trust) can get in.',
+    es: 'Una contraseña es como una palabra secreta que solo tú conoces — como una llave especial de tu propio cuarto. Mantiene tus cuentas bajo llave para que solo tú (y las personas en las que confías) puedan entrar.',
+  },
+  instructions: {
+    en: "Read each password. Decide if it's Weak or Strong, then tap your answer.",
+    es: 'Lee cada contraseña. Decide si es débil o fuerte y toca tu respuesta.',
+  },
+  weakBinLabel: { en: 'Weak passwords', es: 'Contraseñas débiles' },
+  strongBinLabel: { en: 'Strong passwords', es: 'Contraseñas fuertes' },
+  emptyBin: { en: 'Nothing sorted here yet.', es: 'Nada clasificado aquí todavía.' },
+}
 
 function starsForMistakes(mistakes) {
   if (mistakes === 0) return 3
@@ -17,7 +35,7 @@ function starsForMistakes(mistakes) {
   return 1
 }
 
-function PasswordExplanation() {
+function PasswordExplanation({ lang }) {
   return (
     <>
       <span
@@ -26,17 +44,13 @@ function PasswordExplanation() {
       >
         <LockIcon className="h-8 w-8" />
       </span>
-      <h2 className="text-xl font-bold text-ink">What's a Password?</h2>
-      <p className="text-base text-ink-soft">
-        A password is like a secret word that only you know — kind of like a
-        special key to your own room. It keeps your accounts locked so only
-        you (and people you trust) can get in.
-      </p>
+      <h2 className="text-xl font-bold text-ink">{pick(TEXT.introHeading, lang)}</h2>
+      <p className="text-base text-ink-soft">{pick(TEXT.introBody, lang)}</p>
     </>
   )
 }
 
-function PasswordCard({ item, onSort, hint, shaking, onShakeEnd }) {
+function PasswordCard({ item, onSort, hint, shaking, onShakeEnd, lang, t }) {
   return (
     <li
       onAnimationEnd={onShakeEnd}
@@ -50,7 +64,7 @@ function PasswordCard({ item, onSort, hint, shaking, onShakeEnd }) {
       </p>
       {hint && (
         <p className="mb-3 rounded-lg bg-sky px-3 py-2 text-sm text-ink-soft">
-          💡 {hint}
+          💡 {pick(hint, lang)}
         </p>
       )}
       <div className="flex gap-2">
@@ -59,21 +73,21 @@ function PasswordCard({ item, onSort, hint, shaking, onShakeEnd }) {
           onClick={() => onSort(item.id, 'weak')}
           className="min-h-11 flex-1 rounded-full border-b-4 border-weak-deep bg-weak px-3 py-2 text-base font-bold text-white transition-all duration-150 hover:brightness-105 active:translate-y-1 active:border-b-0"
         >
-          Weak
+          {t('weak')}
         </button>
         <button
           type="button"
           onClick={() => onSort(item.id, 'strong')}
           className="min-h-11 flex-1 rounded-full border-b-4 border-strong-deep bg-strong px-3 py-2 text-base font-bold text-white transition-all duration-150 hover:brightness-105 active:translate-y-1 active:border-b-0"
         >
-          Strong
+          {t('strong')}
         </button>
       </div>
     </li>
   )
 }
 
-function BinList({ label, tone, items }) {
+function BinList({ label, tone, items, lang }) {
   const toneClasses =
     tone === 'weak'
       ? 'border-weak/60 bg-weak/5'
@@ -84,7 +98,7 @@ function BinList({ label, tone, items }) {
     <div className={`rounded-2xl border p-3 ${toneClasses}`}>
       <h3 className="mb-2 text-sm font-semibold text-ink">{label}</h3>
       {items.length === 0 ? (
-        <p className="text-sm text-ink-soft/60">Nothing sorted here yet.</p>
+        <p className="text-sm text-ink-soft/60">{pick(TEXT.emptyBin, lang)}</p>
       ) : (
         <ul className="space-y-2">
           {items.map((item) => (
@@ -102,7 +116,7 @@ function BinList({ label, tone, items }) {
                   {item.password}
                 </span>
               </div>
-              <p className="text-xs text-ink-soft">{item.reason}</p>
+              <p className="text-xs text-ink-soft">{pick(item.reason, lang)}</p>
             </li>
           ))}
         </ul>
@@ -113,10 +127,11 @@ function BinList({ label, tone, items }) {
 
 export default function WeakOrStrong({ onComplete }) {
   const { playCorrect, playIncorrect } = useSound()
+  const { t, lang } = useTranslation()
   const [stage, setStage] = useState('intro') // 'intro' | 'playing'
   const [showHelp, setShowHelp] = useState(false)
   const [placements, setPlacements] = useState({}) // id -> 'weak' | 'strong'
-  const [hints, setHints] = useState({}) // id -> hint string (shown after a wrong guess)
+  const [hints, setHints] = useState({}) // id -> hint object (shown after a wrong guess)
   const [shakingId, setShakingId] = useState(null)
   const [mistakes, setMistakes] = useState(0)
   const [result, setResult] = useState(null) // { stars, newlyEarnedBadgeId }
@@ -160,10 +175,12 @@ export default function WeakOrStrong({ onComplete }) {
     }
   }
 
+  const title = pick(TEXT.title, lang)
+
   if (stage === 'intro') {
     return (
-      <PuzzleIntroScreen title="Weak or Strong?" onStart={() => setStage('playing')}>
-        <PasswordExplanation />
+      <PuzzleIntroScreen title={title} onStart={() => setStage('playing')}>
+        <PasswordExplanation lang={lang} />
       </PuzzleIntroScreen>
     )
   }
@@ -179,13 +196,13 @@ export default function WeakOrStrong({ onComplete }) {
 
   return (
     <PuzzleShell
-      title="Weak or Strong?"
-      instructions="Read each password. Decide if it's Weak or Strong, then tap your answer."
+      title={title}
+      instructions={pick(TEXT.instructions, lang)}
       headerAction={<HelpButton onClick={() => setShowHelp(true)} />}
     >
       {showHelp && (
         <HelpModal onClose={() => setShowHelp(false)}>
-          <PasswordExplanation />
+          <PasswordExplanation lang={lang} />
         </HelpModal>
       )}
       <div className="grid gap-4">
@@ -201,14 +218,16 @@ export default function WeakOrStrong({ onComplete }) {
                 onShakeEnd={() =>
                   setShakingId((current) => (current === item.id ? null : current))
                 }
+                lang={lang}
+                t={t}
               />
             ))}
           </ul>
         )}
 
         <div className="grid gap-3 sm:grid-cols-2">
-          <BinList label="Weak passwords" tone="weak" items={weakItems} />
-          <BinList label="Strong passwords" tone="strong" items={strongItems} />
+          <BinList label={pick(TEXT.weakBinLabel, lang)} tone="weak" items={weakItems} lang={lang} />
+          <BinList label={pick(TEXT.strongBinLabel, lang)} tone="strong" items={strongItems} lang={lang} />
         </div>
       </div>
     </PuzzleShell>

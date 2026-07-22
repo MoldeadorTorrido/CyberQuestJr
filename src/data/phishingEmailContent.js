@@ -1,48 +1,86 @@
 // Content for the "Spot the Phishing Email" puzzle (unit 3).
-// The sender, brand, and email address are entirely fictional.
+// The sender, brand, and email address are entirely fictional. "PixelPals"
+// has a natural Spanish equivalent ("PixelAmigos") rather than staying
+// untranslated, per the localization guidance to avoid awkward
+// transliteration — the Spanish altered address mirrors the same "dropped
+// letter" trick as the English one (pixelamigo vs. PixelAmigos).
 export const EMAIL_SEGMENTS = [
   {
     id: 'from',
-    text: 'From: PixelPals Support <support@pixelpal-alerts.com>',
+    text: {
+      en: 'From: PixelPals Support <support@pixelpal-alerts.com>',
+      es: 'De: Soporte de PixelAmigos <soporte@pixelamigo-alertas.com>',
+    },
     section: 'header',
     suspicious: true,
-    reason:
-      'The address is spelled "pixelpal" instead of "PixelPals" — that\'s a trick to look real.',
+    reason: {
+      en: 'The address is spelled "pixelpal" instead of "PixelPals" — that\'s a trick to look real.',
+      es: 'La dirección dice "pixelamigo" en vez de "PixelAmigos" — es un truco para parecer real.',
+    },
   },
   {
     id: 'subject',
-    text: 'Subject: You won a FREE prize!!! Claim NOW before it expires!!!',
+    text: {
+      en: 'Subject: You won a FREE prize!!! Claim NOW before it expires!!!',
+      es: 'Asunto: ¡GANASTE un premio GRATIS! ¡Reclámalo AHORA antes de que expire!',
+    },
     section: 'header',
     suspicious: true,
-    reason:
-      'A surprise free prize and a countdown are classic tricks to get you to click without thinking.',
+    reason: {
+      en: 'A surprise free prize and a countdown are classic tricks to get you to click without thinking.',
+      es: 'Un premio gratis sorpresa y una cuenta regresiva son trucos clásicos para hacerte hacer clic sin pensar.',
+    },
   },
   {
     id: 'greeting',
-    text: 'Hi there, thanks so much for playing PixelPals with us!',
+    text: {
+      en: 'Hi there, thanks so much for playing PixelPals with us!',
+      es: '¡Hola! Gracias por jugar PixelAmigos con nosotros.',
+    },
     section: 'body',
     suspicious: false,
-    reason: 'Just a friendly hello — nothing suspicious here.',
+    reason: {
+      en: 'Just a friendly hello — nothing suspicious here.',
+      es: 'Solo un saludo amistoso — nada sospechoso aquí.',
+    },
   },
   {
     id: 'password-request',
-    text: 'To claim your prize, reply to this email with your password so we can verify your account.',
+    text: {
+      en: 'To claim your prize, reply to this email with your password so we can verify your account.',
+      es: 'Para reclamar tu premio, responde este correo con tu contraseña para verificar tu cuenta.',
+    },
     section: 'body',
     suspicious: true,
-    reason: 'A real company will never ask you to send your password by email.',
+    reason: {
+      en: 'A real company will never ask you to send your password by email.',
+      es: 'Una empresa de verdad nunca te pedirá que envíes tu contraseña por correo.',
+    },
   },
   {
     id: 'chitchat',
-    text: "We hope you're having fun exploring all the new levels!",
+    text: {
+      en: "We hope you're having fun exploring all the new levels!",
+      es: '¡Esperamos que te estés divirtiendo explorando todos los niveles nuevos!',
+    },
     section: 'body',
     suspicious: false,
-    reason: "Just friendly chit-chat — it's not asking for anything or rushing you.",
+    reason: {
+      en: "Just friendly chit-chat — it's not asking for anything or rushing you.",
+      es: 'Solo una charla amistosa — no te pide nada ni te apura.',
+    },
   },
   {
     id: 'urgency',
-    text: 'Hurry! This offer disappears in 10 minutes — act now!',
+    text: {
+      en: 'Hurry! This offer disappears in 10 minutes — act now!',
+      es: '¡Apúrate! Esta oferta desaparece en 10 minutos — ¡actúa ahora!',
+    },
     section: 'body',
     suspicious: true,
-    reason: 'Rushing you to act fast, before you have time to think, is a big red flag.',
+    reason: {
+      en: 'Rushing you to act fast, before you have time to think, is a big red flag.',
+      es: 'Que te apuren a actuar rápido, antes de que puedas pensar, es una gran señal de alerta.',
+    },
   },
 ]
