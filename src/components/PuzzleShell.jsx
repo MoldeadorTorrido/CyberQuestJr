@@ -1,13 +1,16 @@
 import { Link } from 'react-router-dom'
+import { useTranslation } from '../i18n/strings'
 
 export default function PuzzleShell({ title, instructions, headerAction, children }) {
+  const { t } = useTranslation()
+
   return (
     <div className="mx-auto flex min-h-svh max-w-3xl flex-col px-4 py-6 sm:px-6">
       <header className="mb-6 flex items-center gap-3">
         <Link
           to="/"
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-locked bg-white text-xl text-ink-soft transition-transform duration-150 hover:bg-sky/50 active:scale-95"
-          aria-label="Back to path"
+          aria-label={t('backToPath')}
         >
           ←
         </Link>

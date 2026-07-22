@@ -6,11 +6,14 @@ import { BADGES } from '../data/badges'
 import ConfettiBurst from './ConfettiBurst'
 import { useSound } from '../context/SoundContext'
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
+import { pick } from '../i18n/LanguageContext'
+import { useTranslation } from '../i18n/strings'
 
 export default function CompletionCelebration({ stars, newlyEarnedBadgeId }) {
   const navigate = useNavigate()
   const { playBadge } = useSound()
   const reducedMotion = usePrefersReducedMotion()
+  const { t, lang } = useTranslation()
   const badge = BADGES.find((b) => b.id === newlyEarnedBadgeId)
   const BadgeIcon = badge ? BADGE_ICONS[badge.icon] : null
 
@@ -32,13 +35,11 @@ export default function CompletionCelebration({ stars, newlyEarnedBadgeId }) {
       {badge && <ConfettiBurst />}
       <div className="relative z-10 flex flex-col items-center gap-4">
         <h2 id="celebration-heading" className="text-3xl font-extrabold text-ink">
-          Great job!
+          {t('greatJob')}
         </h2>
         <StarRating stars={stars} size="lg" />
         <p className="text-base text-ink-soft">
-          {stars === 3
-            ? 'You nailed it on the first try!'
-            : "You got there! Keep practicing and you'll be a pro."}
+          {stars === 3 ? t('starMsg3') : t('starMsgLess')}
         </p>
 
         {badge && (
@@ -52,7 +53,7 @@ export default function CompletionCelebration({ stars, newlyEarnedBadgeId }) {
               {BadgeIcon && <BadgeIcon className="h-9 w-9" />}
             </span>
             <p className="text-sm font-semibold text-ink">
-              New badge unlocked: {badge.name}!
+              {t('newBadgeUnlocked', { name: pick(badge.name, lang) })}
             </p>
           </div>
         )}
@@ -62,7 +63,7 @@ export default function CompletionCelebration({ stars, newlyEarnedBadgeId }) {
           onClick={() => navigate('/')}
           className="mt-2 min-h-11 w-full rounded-full border-b-4 border-strong-deep bg-strong px-6 py-3 text-base font-bold text-white transition-all duration-150 hover:brightness-105 active:translate-y-1 active:border-b-0"
         >
-          Continue
+          {t('continueBtn')}
         </button>
       </div>
     </div>

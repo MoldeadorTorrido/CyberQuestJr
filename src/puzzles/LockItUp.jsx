@@ -5,27 +5,32 @@ import HelpButton from '../components/HelpButton'
 import HelpModal from '../components/HelpModal'
 import CompletionCelebration from '../components/CompletionCelebration'
 import { CheckIcon, LockIcon, XIcon } from '../components/Icons'
-import { WEAK_OR_STRONG_ITEMS } from '../data/weakOrStrongItems'
+import { LOCK_ITEMS } from '../data/lockItUpItems'
 import { useSound } from '../context/SoundContext'
 import { getUnitById } from '../data/units'
 import { pick } from '../i18n/LanguageContext'
 import { useTranslation } from '../i18n/strings'
 
-const UNIT_COLOR = getUnitById('weak-or-strong').color
+const UNIT_COLOR = getUnitById('lock-it-up').color
 
 const TEXT = {
-  title: { en: 'Weak or Strong?', es: '¿Débil o Fuerte?' },
-  introHeading: { en: "What's a Password?", es: '¿Qué es una Contraseña?' },
+  title: { en: 'Lock It Up', es: 'Bloquéalo' },
+  introHeading: {
+    en: 'What Does a Screen Lock Protect?',
+    es: '¿Qué Protege un Bloqueo de Pantalla?',
+  },
   introBody: {
-    en: 'A password is like a secret word that only you know — kind of like a special key to your own room. It keeps your accounts locked so only you (and people you trust) can get in.',
-    es: 'Una contraseña es como una palabra secreta que solo tú conoces — como una llave especial de tu propio cuarto. Mantiene tus cuentas bajo llave para que solo tú (y las personas en las que confías) puedan entrar.',
+    en: 'A screen lock keeps your device private, but only if you use it and keep your code secret. Apps also ask for permissions like your contacts or microphone — sometimes that makes sense, and sometimes it doesn\'t!',
+    es: 'Un bloqueo de pantalla mantiene tu dispositivo privado, pero solo si lo usas y mantienes tu código en secreto. Las apps también piden permisos como tus contactos o tu micrófono — ¡a veces eso tiene sentido, y a veces no!',
   },
   instructions: {
-    en: "Read each password. Decide if it's Weak or Strong, then tap your answer.",
-    es: 'Lee cada contraseña. Decide si es débil o fuerte y toca tu respuesta.',
+    en: 'Read each one. Decide if it makes sense, then tap your answer.',
+    es: 'Lee cada una. Decide si tiene sentido y toca tu respuesta.',
   },
-  weakBinLabel: { en: 'Weak passwords', es: 'Contraseñas débiles' },
-  strongBinLabel: { en: 'Strong passwords', es: 'Contraseñas fuertes' },
+  yesLabel: { en: 'Makes Sense', es: 'Tiene Sentido' },
+  noLabel: { en: "Doesn't Make Sense", es: 'No Tiene Sentido' },
+  yesBinLabel: { en: 'Makes sense', es: 'Tiene sentido' },
+  noBinLabel: { en: "Doesn't make sense", es: 'No tiene sentido' },
   emptyBin: { en: 'Nothing sorted here yet.', es: 'Nada clasificado aquí todavía.' },
 }
 
@@ -35,7 +40,7 @@ function starsForMistakes(mistakes) {
   return 1
 }
 
-function PasswordExplanation({ lang }) {
+function LockExplanation({ lang }) {
   return (
     <>
       <span
@@ -50,7 +55,7 @@ function PasswordExplanation({ lang }) {
   )
 }
 
-function PasswordCard({ item, onSort, hint, shaking, onShakeEnd, lang, t }) {
+function LockCard({ item, onSort, hint, shaking, onShakeEnd, lang }) {
   return (
     <li
       onAnimationEnd={onShakeEnd}
@@ -59,8 +64,8 @@ function PasswordCard({ item, onSort, hint, shaking, onShakeEnd, lang, t }) {
         shaking ? 'animate-shake' : '',
       ].join(' ')}
     >
-      <p className="mb-3 break-words rounded-xl bg-sand px-3 py-2 text-center font-mono text-lg text-ink">
-        {item.password}
+      <p className="mb-3 rounded-xl bg-sand px-3 py-2 text-center text-base text-ink">
+        {pick(item.text, lang)}
       </p>
       {hint && (
         <p className="mb-3 rounded-lg bg-sky px-3 py-2 text-sm text-ink-soft">
@@ -70,17 +75,17 @@ function PasswordCard({ item, onSort, hint, shaking, onShakeEnd, lang, t }) {
       <div className="flex gap-2">
         <button
           type="button"
-          onClick={() => onSort(item.id, 'weak')}
-          className="min-h-11 flex-1 rounded-full border-b-4 border-weak-deep bg-weak px-3 py-2 text-base font-bold text-white transition-all duration-150 hover:brightness-105 active:translate-y-1 active:border-b-0"
+          onClick={() => onSort(item.id, 'no')}
+          className="min-h-11 flex-1 rounded-full border-b-4 border-weak-deep bg-weak px-3 py-2 text-sm font-bold text-white transition-all duration-150 hover:brightness-105 active:translate-y-1 active:border-b-0"
         >
-          {t('weak')}
+          {pick(TEXT.noLabel, lang)}
         </button>
         <button
           type="button"
-          onClick={() => onSort(item.id, 'strong')}
-          className="min-h-11 flex-1 rounded-full border-b-4 border-strong-deep bg-strong px-3 py-2 text-base font-bold text-white transition-all duration-150 hover:brightness-105 active:translate-y-1 active:border-b-0"
+          onClick={() => onSort(item.id, 'yes')}
+          className="min-h-11 flex-1 rounded-full border-b-4 border-strong-deep bg-strong px-3 py-2 text-sm font-bold text-white transition-all duration-150 hover:brightness-105 active:translate-y-1 active:border-b-0"
         >
-          {t('strong')}
+          {pick(TEXT.yesLabel, lang)}
         </button>
       </div>
     </li>
@@ -89,10 +94,8 @@ function PasswordCard({ item, onSort, hint, shaking, onShakeEnd, lang, t }) {
 
 function BinList({ label, tone, items, lang }) {
   const toneClasses =
-    tone === 'weak'
-      ? 'border-weak/60 bg-weak/5'
-      : 'border-strong/60 bg-strong/5'
-  const iconColor = tone === 'weak' ? 'text-weak' : 'text-strong'
+    tone === 'no' ? 'border-weak/60 bg-weak/5' : 'border-strong/60 bg-strong/5'
+  const iconColor = tone === 'no' ? 'text-weak' : 'text-strong'
 
   return (
     <div className={`rounded-2xl border p-3 ${toneClasses}`}>
@@ -102,19 +105,14 @@ function BinList({ label, tone, items, lang }) {
       ) : (
         <ul className="space-y-2">
           {items.map((item) => (
-            <li
-              key={item.id}
-              className="animate-pop-in rounded-xl bg-white p-3 shadow-sm"
-            >
+            <li key={item.id} className="animate-pop-in rounded-xl bg-white p-3 shadow-sm">
               <div className="mb-1 flex items-center gap-2">
-                {tone === 'weak' ? (
-                  <XIcon className={`h-4 w-4 ${iconColor}`} />
+                {tone === 'no' ? (
+                  <XIcon className={`h-4 w-4 shrink-0 ${iconColor}`} />
                 ) : (
-                  <CheckIcon className={`h-4 w-4 ${iconColor}`} />
+                  <CheckIcon className={`h-4 w-4 shrink-0 ${iconColor}`} />
                 )}
-                <span className="font-mono text-sm text-ink">
-                  {item.password}
-                </span>
+                <span className="text-sm text-ink">{pick(item.text, lang)}</span>
               </div>
               <p className="text-xs text-ink-soft">{pick(item.reason, lang)}</p>
             </li>
@@ -125,30 +123,26 @@ function BinList({ label, tone, items, lang }) {
   )
 }
 
-export default function WeakOrStrong({ onComplete }) {
+export default function LockItUp({ onComplete }) {
   const { playCorrect, playIncorrect } = useSound()
-  const { t, lang } = useTranslation()
+  const { lang } = useTranslation()
   const [stage, setStage] = useState('intro') // 'intro' | 'playing'
   const [showHelp, setShowHelp] = useState(false)
-  const [placements, setPlacements] = useState({}) // id -> 'weak' | 'strong'
-  const [hints, setHints] = useState({}) // id -> hint object (shown after a wrong guess)
+  const [placements, setPlacements] = useState({}) // id -> 'yes' | 'no'
+  const [hints, setHints] = useState({})
   const [shakingId, setShakingId] = useState(null)
   const [mistakes, setMistakes] = useState(0)
   const [result, setResult] = useState(null) // { stars, newlyEarnedBadgeId }
 
   const unsortedItems = useMemo(
-    () => WEAK_OR_STRONG_ITEMS.filter((item) => !placements[item.id]),
+    () => LOCK_ITEMS.filter((item) => !placements[item.id]),
     [placements],
   )
-  const weakItems = WEAK_OR_STRONG_ITEMS.filter(
-    (item) => placements[item.id] === 'weak',
-  )
-  const strongItems = WEAK_OR_STRONG_ITEMS.filter(
-    (item) => placements[item.id] === 'strong',
-  )
+  const noItems = LOCK_ITEMS.filter((item) => placements[item.id] === 'no')
+  const yesItems = LOCK_ITEMS.filter((item) => placements[item.id] === 'yes')
 
   const handleSort = (itemId, guess) => {
-    const item = WEAK_OR_STRONG_ITEMS.find((i) => i.id === itemId)
+    const item = LOCK_ITEMS.find((i) => i.id === itemId)
     if (item.answer === guess) {
       playCorrect()
       const nextPlacements = { ...placements, [itemId]: guess }
@@ -159,9 +153,7 @@ export default function WeakOrStrong({ onComplete }) {
         return next
       })
 
-      const allSorted = WEAK_OR_STRONG_ITEMS.every(
-        (i) => nextPlacements[i.id],
-      )
+      const allSorted = LOCK_ITEMS.every((i) => nextPlacements[i.id])
       if (allSorted) {
         const stars = starsForMistakes(mistakes)
         const newlyEarnedBadgeId = onComplete(stars)
@@ -170,7 +162,7 @@ export default function WeakOrStrong({ onComplete }) {
     } else {
       playIncorrect()
       setMistakes((m) => m + 1)
-      setHints((prev) => ({ ...prev, [itemId]: item.hint }))
+      setHints((prev) => ({ ...prev, [itemId]: item.reason }))
       setShakingId(itemId)
     }
   }
@@ -180,7 +172,7 @@ export default function WeakOrStrong({ onComplete }) {
   if (stage === 'intro') {
     return (
       <PuzzleIntroScreen title={title} onStart={() => setStage('playing')}>
-        <PasswordExplanation lang={lang} />
+        <LockExplanation lang={lang} />
       </PuzzleIntroScreen>
     )
   }
@@ -202,14 +194,14 @@ export default function WeakOrStrong({ onComplete }) {
     >
       {showHelp && (
         <HelpModal onClose={() => setShowHelp(false)}>
-          <PasswordExplanation lang={lang} />
+          <LockExplanation lang={lang} />
         </HelpModal>
       )}
       <div className="grid gap-4">
         {unsortedItems.length > 0 && (
           <ul className="grid gap-3 sm:grid-cols-2">
             {unsortedItems.map((item) => (
-              <PasswordCard
+              <LockCard
                 key={item.id}
                 item={item}
                 hint={hints[item.id]}
@@ -219,15 +211,14 @@ export default function WeakOrStrong({ onComplete }) {
                   setShakingId((current) => (current === item.id ? null : current))
                 }
                 lang={lang}
-                t={t}
               />
             ))}
           </ul>
         )}
 
         <div className="grid gap-3 sm:grid-cols-2">
-          <BinList label={pick(TEXT.weakBinLabel, lang)} tone="weak" items={weakItems} lang={lang} />
-          <BinList label={pick(TEXT.strongBinLabel, lang)} tone="strong" items={strongItems} lang={lang} />
+          <BinList label={pick(TEXT.noBinLabel, lang)} tone="no" items={noItems} lang={lang} />
+          <BinList label={pick(TEXT.yesBinLabel, lang)} tone="yes" items={yesItems} lang={lang} />
         </div>
       </div>
     </PuzzleShell>

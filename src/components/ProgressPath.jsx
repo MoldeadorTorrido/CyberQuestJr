@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom'
 import { CheckIcon, LockIcon } from './Icons'
 import StarRating from './StarRating'
+import { pick } from '../i18n/LanguageContext'
+import { useTranslation } from '../i18n/strings'
 
-function UnitNode({ unit, unlocked, completed, stars }) {
+function UnitNode({ unit, unlocked, completed, stars, lang, t }) {
   const baseClasses =
     'group flex flex-col items-center gap-2 rounded-2xl px-3 py-3 min-w-[6.5rem] transition-transform duration-150 focus-visible:outline-offset-4'
 
@@ -40,13 +42,13 @@ function UnitNode({ unit, unlocked, completed, stars }) {
           unlocked ? 'font-semibold text-ink' : 'font-medium text-ink-soft/70',
         ].join(' ')}
       >
-        {unit.title}
+        {pick(unit.title, lang)}
       </span>
       {completed ? (
         <StarRating stars={stars} size="sm" />
       ) : (
         <span className="text-xs text-ink-soft/60">
-          {unlocked ? 'Ready to play' : 'Locked'}
+          {unlocked ? t('readyToPlay') : t('locked')}
         </span>
       )}
     </>
@@ -74,8 +76,10 @@ function UnitNode({ unit, unlocked, completed, stars }) {
 }
 
 export default function ProgressPath({ units, isUnitUnlocked, getUnitStars }) {
+  const { t, lang } = useTranslation()
+
   return (
-    <nav aria-label="Puzzle progress path">
+    <nav aria-label={t('progressPathAria')}>
       <ol className="flex flex-wrap items-start justify-center gap-2 sm:gap-3">
         {units.map((unit) => (
           <li key={unit.id}>
@@ -84,6 +88,8 @@ export default function ProgressPath({ units, isUnitUnlocked, getUnitStars }) {
               unlocked={isUnitUnlocked(unit.id)}
               completed={Boolean(getUnitStars(unit.id))}
               stars={getUnitStars(unit.id)}
+              lang={lang}
+              t={t}
             />
           </li>
         ))}

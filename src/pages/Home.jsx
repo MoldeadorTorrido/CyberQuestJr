@@ -2,8 +2,10 @@ import { UNITS } from '../data/units'
 import ProgressPath from '../components/ProgressPath'
 import BadgeShelf from '../components/BadgeShelf'
 import CastleGuardIllustration from '../components/CastleGuardIllustration'
+import { useTranslation } from '../i18n/strings'
 
 export default function Home({ isUnitUnlocked, getUnitStars, earnedBadgeIds }) {
+  const { t } = useTranslation()
   const completedCount = UNITS.filter((u) => getUnitStars(u.id) > 0).length
 
   return (
@@ -13,18 +15,15 @@ export default function Home({ isUnitUnlocked, getUnitStars, earnedBadgeIds }) {
           CyberQuest Jr.
         </h1>
         <CastleGuardIllustration className="mx-auto mt-2 h-40 sm:h-48" />
-        <p className="mt-2 text-lg text-ink-soft">
-          You're the guard of your own castle! Play each puzzle to learn how
-          to keep it safe.
-        </p>
+        <p className="mt-2 text-lg text-ink-soft">{t('appTagline')}</p>
         <p className="mt-1 text-sm text-ink-soft/70">
-          {completedCount} of {UNITS.length} puzzles complete
+          {t('puzzlesCompleteCount', { completed: completedCount, total: UNITS.length })}
         </p>
       </header>
 
       <section aria-labelledby="path-heading">
         <h2 id="path-heading" className="mb-4 text-center text-lg font-semibold text-ink">
-          Your Path
+          {t('yourPath')}
         </h2>
         <ProgressPath
           units={UNITS}

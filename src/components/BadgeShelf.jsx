@@ -1,7 +1,9 @@
 import { BADGES, unitsForBadge } from '../data/badges'
 import { BADGE_ICONS, LockIcon } from './Icons'
+import { pick } from '../i18n/LanguageContext'
+import { useTranslation } from '../i18n/strings'
 
-function BadgeCard({ badge, earned }) {
+function BadgeCard({ badge, earned, lang, t }) {
   const Icon = BADGE_ICONS[badge.icon]
   const unitCount = unitsForBadge(badge.id).length
 
@@ -27,20 +29,22 @@ function BadgeCard({ badge, earned }) {
         )}
       </span>
       <span className={`text-sm font-bold ${earned ? 'text-ink' : 'text-ink-soft/70'}`}>
-        {badge.name}
+        {pick(badge.name, lang)}
       </span>
       <span className={`text-xs ${earned ? 'text-ink/80' : 'text-ink-soft/70'}`}>
-        {earned ? badge.description : `Finish ${unitCount} puzzles to unlock`}
+        {earned ? pick(badge.description, lang) : t('finishToUnlock', { count: unitCount })}
       </span>
     </li>
   )
 }
 
 export default function BadgeShelf({ earnedBadgeIds }) {
+  const { t, lang } = useTranslation()
+
   return (
     <section aria-labelledby="badge-shelf-heading">
       <h2 id="badge-shelf-heading" className="mb-3 text-lg font-semibold text-ink">
-        Badge Shelf
+        {t('badgeShelf')}
       </h2>
       <ul className="flex flex-wrap justify-center gap-3">
         {BADGES.map((badge) => (
@@ -48,6 +52,8 @@ export default function BadgeShelf({ earnedBadgeIds }) {
             key={badge.id}
             badge={badge}
             earned={earnedBadgeIds.includes(badge.id)}
+            lang={lang}
+            t={t}
           />
         ))}
       </ul>

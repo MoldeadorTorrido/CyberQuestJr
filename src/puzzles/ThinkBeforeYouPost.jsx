@@ -4,25 +4,25 @@ import PuzzleIntroScreen from '../components/PuzzleIntroScreen'
 import HelpButton from '../components/HelpButton'
 import HelpModal from '../components/HelpModal'
 import CompletionCelebration from '../components/CompletionCelebration'
-import { CheckIcon, ShieldIcon } from '../components/Icons'
-import { SCENARIOS } from '../data/passwordSharingScenarios'
+import { CheckIcon, ShieldIcon, XIcon } from '../components/Icons'
+import { POST_SCENARIOS } from '../data/postScenarios'
 import { useSound } from '../context/SoundContext'
 import { getUnitById } from '../data/units'
 import { pick } from '../i18n/LanguageContext'
 import { interpolate, useTranslation } from '../i18n/strings'
 
-const UNIT_COLOR = getUnitById('who-can-i-tell').color
+const UNIT_COLOR = getUnitById('think-before-you-post').color
 
 const TEXT = {
-  title: { en: 'Who Can I Tell My Password To?', es: '¿A Quién Le Digo Mi Contraseña?' },
-  introHeading: { en: 'Who Gets Your Password?', es: '¿Quién Recibe Tu Contraseña?' },
+  title: { en: 'Think Before You Post', es: 'Piensa Antes de Publicar' },
+  introHeading: { en: 'Who Can See Your Post?', es: '¿Quién Puede Ver Tu Publicación?' },
   introBody: {
-    en: "Never share your password — not with a friend, and not with anyone who says they're from a company or a game. The only person you can tell is a parent or grown-up you trust. If someone else asks, that's a sign something's not right!",
-    es: 'Nunca compartas tu contraseña — ni con un amigo, ni con nadie que diga ser de una empresa o de un juego. La única persona a quien puedes decírsela es a un papá, mamá o adulto de confianza. Si alguien más te la pide, ¡esa es una señal de que algo no está bien!',
+    en: "Once something is posted, more people can see it than you might expect — and it can be hard to fully take back. That doesn't mean you can't post! Just take a quick look first: does it show where you live, go to school, or that you're home alone?",
+    es: 'Una vez que publicas algo, más personas de las que crees pueden verlo — y puede ser difícil borrarlo por completo. ¡Eso no significa que no puedas publicar! Solo revisa rápido primero: ¿muestra dónde vives, a qué escuela vas, o que estás solo(a) en casa?',
   },
   instructions: {
-    en: 'Question {n} of {total}. Pick the safe choice.',
-    es: 'Pregunta {n} de {total}. Elige la opción segura.',
+    en: 'Post {n} of {total}. Would you share it as-is?',
+    es: 'Publicación {n} de {total}. ¿La compartirías tal cual?',
   },
 }
 
@@ -32,7 +32,7 @@ function starsForMistakes(mistakes) {
   return 1
 }
 
-function SharingExplanation({ lang }) {
+function PostExplanation({ lang }) {
   return (
     <>
       <span
@@ -47,42 +47,50 @@ function SharingExplanation({ lang }) {
   )
 }
 
-export default function WhoCanITellMyPassword({ onComplete }) {
+export default function ThinkBeforeYouPost({ onComplete }) {
   const { playCorrect, playIncorrect } = useSound()
   const { t, lang } = useTranslation()
   const [stage, setStage] = useState('intro') // 'intro' | 'playing'
   const [showHelp, setShowHelp] = useState(false)
   const [scenarioIndex, setScenarioIndex] = useState(0)
-  const [selectedOptionId, setSelectedOptionId] = useState(null)
-  const [shakingOptionId, setShakingOptionId] = useState(null)
+  const [correctId, setCorrectId] = useState(null)
+  const [wrongId, setWrongId] = useState(null)
+  const [shakingId, setShakingId] = useState(null)
   const [mistakes, setMistakes] = useState(0)
   const [result, setResult] = useState(null) // { stars, newlyEarnedBadgeId }
 
-  const scenario = SCENARIOS[scenarioIndex]
-  const answeredCorrectly = selectedOptionId !== null
+  const scenario = POST_SCENARIOS[scenarioIndex]
+
+  const getStatus = (option) => {
+    if (correctId === option.id) return 'correct'
+    if (wrongId === option.id) return 'incorrect'
+    return 'unselected'
+  }
 
   const handleSelect = (option) => {
-    if (answeredCorrectly) return
-
+    if (correctId !== null) return
     if (option.correct) {
       playCorrect()
-      setSelectedOptionId(option.id)
+      setCorrectId(option.id)
     } else {
+      if (wrongId === option.id) return
       playIncorrect()
       setMistakes((m) => m + 1)
-      setShakingOptionId(option.id)
+      setWrongId(option.id)
+      setShakingId(option.id)
     }
   }
 
   const handleNext = () => {
-    if (scenarioIndex === SCENARIOS.length - 1) {
+    if (scenarioIndex === POST_SCENARIOS.length - 1) {
       const stars = starsForMistakes(mistakes)
       const newlyEarnedBadgeId = onComplete(stars)
       setResult({ stars, newlyEarnedBadgeId })
       return
     }
     setScenarioIndex((i) => i + 1)
-    setSelectedOptionId(null)
+    setCorrectId(null)
+    setWrongId(null)
   }
 
   const title = pick(TEXT.title, lang)
@@ -90,7 +98,7 @@ export default function WhoCanITellMyPassword({ onComplete }) {
   if (stage === 'intro') {
     return (
       <PuzzleIntroScreen title={title} onStart={() => setStage('playing')}>
-        <SharingExplanation lang={lang} />
+        <PostExplanation lang={lang} />
       </PuzzleIntroScreen>
     )
   }
@@ -109,64 +117,70 @@ export default function WhoCanITellMyPassword({ onComplete }) {
       title={title}
       instructions={interpolate(pick(TEXT.instructions, lang), {
         n: scenarioIndex + 1,
-        total: SCENARIOS.length,
+        total: POST_SCENARIOS.length,
       })}
       headerAction={<HelpButton onClick={() => setShowHelp(true)} />}
     >
       {showHelp && (
         <HelpModal onClose={() => setShowHelp(false)}>
-          <SharingExplanation lang={lang} />
+          <PostExplanation lang={lang} />
         </HelpModal>
       )}
 
       <div className="mx-auto flex max-w-lg flex-col gap-6">
         <p className="rounded-2xl border border-locked/70 bg-white px-5 py-4 text-lg text-ink shadow-sm">
-          {pick(scenario.prompt, lang)}
+          {pick(scenario.post, lang)}
         </p>
 
         <ul className="flex flex-col gap-3">
           {scenario.options.map((option) => {
-            const isCorrectSelected = selectedOptionId === option.id
+            const status = getStatus(option)
+            const isResolved = status !== 'unselected'
             return (
               <li
                 key={option.id}
                 onAnimationEnd={() =>
-                  setShakingOptionId((current) => (current === option.id ? null : current))
+                  setShakingId((current) => (current === option.id ? null : current))
                 }
-                className={shakingOptionId === option.id ? 'animate-shake' : undefined}
+                className={shakingId === option.id ? 'animate-shake' : undefined}
               >
                 <button
                   type="button"
                   onClick={() => handleSelect(option)}
-                  disabled={answeredCorrectly}
+                  disabled={isResolved}
                   className={[
                     'flex min-h-11 w-full items-center gap-2 rounded-2xl border-2 px-4 py-3 text-left text-base transition-transform duration-150',
-                    isCorrectSelected
+                    status === 'correct'
                       ? 'cursor-default border-strong bg-strong/10 font-semibold text-strong'
-                      : answeredCorrectly
-                        ? 'cursor-default border-locked/60 bg-white text-ink-soft/60'
+                      : status === 'incorrect'
+                        ? 'cursor-default border-weak bg-weak/10 text-weak'
                         : 'border-locked bg-white text-ink hover:bg-sky/20 active:scale-[0.99]',
                   ].join(' ')}
                 >
-                  {isCorrectSelected && <CheckIcon className="h-5 w-5 shrink-0 text-strong" />}
+                  {status === 'correct' && <CheckIcon className="h-5 w-5 shrink-0 text-strong" />}
+                  {status === 'incorrect' && <XIcon className="h-5 w-5 shrink-0 text-weak" />}
                   {pick(option.label, lang)}
                 </button>
+                {isResolved && (
+                  <p
+                    className={`mt-1 px-4 text-sm ${status === 'correct' ? 'text-strong' : 'text-weak'}`}
+                  >
+                    {pick(option.consequence, lang)}
+                  </p>
+                )}
               </li>
             )
           })}
         </ul>
 
-        {answeredCorrectly && (
-          <div className="animate-pop-in flex flex-col items-center gap-3 rounded-2xl border border-strong/60 bg-strong/5 px-4 py-4 text-center">
-            <p className="text-sm text-ink">{pick(scenario.reason, lang)}</p>
-            <button
-              type="button"
-              onClick={handleNext}
-              className="min-h-11 w-full rounded-full border-b-4 border-strong-deep bg-strong px-6 py-3 text-base font-bold text-white transition-all duration-150 hover:brightness-105 active:translate-y-1 active:border-b-0"
-            >
-              {scenarioIndex === SCENARIOS.length - 1 ? t('finish') : t('next')}
-            </button>
-          </div>
+        {correctId !== null && (
+          <button
+            type="button"
+            onClick={handleNext}
+            className="animate-pop-in min-h-11 w-full rounded-full border-b-4 border-strong-deep bg-strong px-6 py-3 text-base font-bold text-white transition-all duration-150 hover:brightness-105 active:translate-y-1 active:border-b-0"
+          >
+            {scenarioIndex === POST_SCENARIOS.length - 1 ? t('finish') : t('next')}
+          </button>
         )}
       </div>
     </PuzzleShell>

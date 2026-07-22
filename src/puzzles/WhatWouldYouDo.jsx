@@ -8,8 +8,23 @@ import { CheckIcon, ShieldIcon, XIcon } from '../components/Icons'
 import { SCENARIOS } from '../data/whatWouldYouDoScenarios'
 import { useSound } from '../context/SoundContext'
 import { getUnitById } from '../data/units'
+import { pick } from '../i18n/LanguageContext'
+import { interpolate, useTranslation } from '../i18n/strings'
 
 const UNIT_COLOR = getUnitById('what-would-you-do').color
+
+const TEXT = {
+  title: { en: 'What Would You Do?', es: '¿Qué Harías Tú?' },
+  introHeading: { en: 'What Would You Do?', es: '¿Qué Harías Tú?' },
+  introBody: {
+    en: "Sometimes you'll see a message, link, or pop-up that feels a little off. The safest move is always the same: don't click, don't reply — go tell a parent or trusted grown-up. They can help you figure out what's really going on!",
+    es: 'A veces verás un mensaje, un enlace o una ventana emergente que se siente un poco raro. El movimiento más seguro es siempre el mismo: no hagas clic, no respondas — ve y cuéntale a un papá, mamá o adulto de confianza. ¡Ellos pueden ayudarte a descubrir qué está pasando de verdad!',
+  },
+  instructions: {
+    en: 'Scenario {n} of {total}. Pick the safe next step.',
+    es: 'Escenario {n} de {total}. Elige el siguiente paso seguro.',
+  },
+}
 
 function starsForMistakes(mistakes) {
   if (mistakes === 0) return 3
@@ -17,7 +32,7 @@ function starsForMistakes(mistakes) {
   return 1
 }
 
-function WhatWouldYouDoExplanation() {
+function WhatWouldYouDoExplanation({ lang }) {
   return (
     <>
       <span
@@ -26,18 +41,13 @@ function WhatWouldYouDoExplanation() {
       >
         <ShieldIcon className="h-8 w-8" />
       </span>
-      <h2 className="text-xl font-bold text-ink">What Would You Do?</h2>
-      <p className="text-base text-ink-soft">
-        Sometimes you'll see a message, link, or pop-up that feels a little
-        off. The safest move is always the same: don't click, don't reply —
-        go tell a parent or trusted grown-up. They can help you figure out
-        what's really going on!
-      </p>
+      <h2 className="text-xl font-bold text-ink">{pick(TEXT.introHeading, lang)}</h2>
+      <p className="text-base text-ink-soft">{pick(TEXT.introBody, lang)}</p>
     </>
   )
 }
 
-function ScenarioOption({ option, status, shaking, onSelect, onShakeEnd }) {
+function ScenarioOption({ option, status, shaking, onSelect, onShakeEnd, lang }) {
   // status: 'unselected' | 'correct' | 'incorrect'
   const isResolved = status !== 'unselected'
 
@@ -58,11 +68,11 @@ function ScenarioOption({ option, status, shaking, onSelect, onShakeEnd }) {
       >
         {status === 'correct' && <CheckIcon className="h-5 w-5 shrink-0 text-strong" />}
         {status === 'incorrect' && <XIcon className="h-5 w-5 shrink-0 text-weak" />}
-        {option.label}
+        {pick(option.label, lang)}
       </button>
       {isResolved && (
         <p className={`mt-1 px-4 text-sm ${status === 'correct' ? 'text-strong' : 'text-weak'}`}>
-          {option.consequence}
+          {pick(option.consequence, lang)}
         </p>
       )}
     </li>
@@ -71,6 +81,7 @@ function ScenarioOption({ option, status, shaking, onSelect, onShakeEnd }) {
 
 export default function WhatWouldYouDo({ onComplete }) {
   const { playCorrect, playIncorrect } = useSound()
+  const { t, lang } = useTranslation()
   const [stage, setStage] = useState('intro') // 'intro' | 'playing'
   const [showHelp, setShowHelp] = useState(false)
   const [scenarioIndex, setScenarioIndex] = useState(0)
@@ -114,10 +125,12 @@ export default function WhatWouldYouDo({ onComplete }) {
     setWrongId(null)
   }
 
+  const title = pick(TEXT.title, lang)
+
   if (stage === 'intro') {
     return (
-      <PuzzleIntroScreen title="What Would You Do?" onStart={() => setStage('playing')}>
-        <WhatWouldYouDoExplanation />
+      <PuzzleIntroScreen title={title} onStart={() => setStage('playing')}>
+        <WhatWouldYouDoExplanation lang={lang} />
       </PuzzleIntroScreen>
     )
   }
@@ -133,19 +146,22 @@ export default function WhatWouldYouDo({ onComplete }) {
 
   return (
     <PuzzleShell
-      title="What Would You Do?"
-      instructions={`Scenario ${scenarioIndex + 1} of ${SCENARIOS.length}. Pick the safe next step.`}
+      title={title}
+      instructions={interpolate(pick(TEXT.instructions, lang), {
+        n: scenarioIndex + 1,
+        total: SCENARIOS.length,
+      })}
       headerAction={<HelpButton onClick={() => setShowHelp(true)} />}
     >
       {showHelp && (
         <HelpModal onClose={() => setShowHelp(false)}>
-          <WhatWouldYouDoExplanation />
+          <WhatWouldYouDoExplanation lang={lang} />
         </HelpModal>
       )}
 
       <div className="mx-auto flex max-w-lg flex-col gap-6">
         <p className="rounded-2xl border border-locked/70 bg-white px-5 py-4 text-lg text-ink shadow-sm">
-          {scenario.story}
+          {pick(scenario.story, lang)}
         </p>
 
         <ul className="flex flex-col gap-3">
@@ -159,6 +175,7 @@ export default function WhatWouldYouDo({ onComplete }) {
               onShakeEnd={() =>
                 setShakingId((current) => (current === option.id ? null : current))
               }
+              lang={lang}
             />
           ))}
         </ul>
@@ -169,7 +186,7 @@ export default function WhatWouldYouDo({ onComplete }) {
             onClick={handleNext}
             className="animate-pop-in min-h-11 w-full rounded-full border-b-4 border-strong-deep bg-strong px-6 py-3 text-base font-bold text-white transition-all duration-150 hover:brightness-105 active:translate-y-1 active:border-b-0"
           >
-            {scenarioIndex === SCENARIOS.length - 1 ? 'Finish' : 'Next'}
+            {scenarioIndex === SCENARIOS.length - 1 ? t('finish') : t('next')}
           </button>
         )}
       </div>
