@@ -5,6 +5,7 @@ import BuildAStrongPassword from '../puzzles/BuildAStrongPassword'
 import SpotThePhishingEmail from '../puzzles/SpotThePhishingEmail'
 import WhoCanITellMyPassword from '../puzzles/WhoCanITellMyPassword'
 import RealOrFakeLink from '../puzzles/RealOrFakeLink'
+import WhatWouldYouDo from '../puzzles/WhatWouldYouDo'
 import ComingSoon from '../puzzles/ComingSoon'
 
 const PUZZLE_COMPONENTS = {
@@ -13,6 +14,7 @@ const PUZZLE_COMPONENTS = {
   'spot-the-phishing-email': SpotThePhishingEmail,
   'who-can-i-tell': WhoCanITellMyPassword,
   'real-or-fake-link': RealOrFakeLink,
+  'what-would-you-do': WhatWouldYouDo,
 }
 
 export default function PuzzlePage({ isUnitUnlocked, completeUnit }) {

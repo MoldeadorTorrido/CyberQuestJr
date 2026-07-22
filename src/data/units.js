@@ -56,7 +56,7 @@ export const UNITS = [
     title: 'What Would You Do?',
     blurb: 'Choose the safe next step.',
     badgeId: 'phishing-basics',
-    status: 'soon',
+    status: 'ready',
     color: '#4f46e5',
   },
 ]
