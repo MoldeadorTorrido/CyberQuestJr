@@ -1,6 +1,7 @@
 import { UNITS } from '../data/units'
 import ProgressPath from '../components/ProgressPath'
 import BadgeShelf from '../components/BadgeShelf'
+import CastleGuardIllustration from '../components/CastleGuardIllustration'
 
 export default function Home({ isUnitUnlocked, getUnitStars, earnedBadgeIds }) {
   const completedCount = UNITS.filter((u) => getUnitStars(u.id) > 0).length
@@ -11,6 +12,7 @@ export default function Home({ isUnitUnlocked, getUnitStars, earnedBadgeIds }) {
         <h1 className="bg-gradient-to-r from-sky-deep via-violet-600 to-pink-600 bg-clip-text text-5xl font-extrabold tracking-tight text-transparent sm:text-6xl">
           CyberQuest Jr.
         </h1>
+        <CastleGuardIllustration className="mx-auto mt-2 h-40 sm:h-48" />
         <p className="mt-2 text-lg text-ink-soft">
           You're the guard of your own castle! Play each puzzle to learn how
           to keep it safe.
