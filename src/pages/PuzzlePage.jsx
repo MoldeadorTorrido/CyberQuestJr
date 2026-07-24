@@ -9,6 +9,7 @@ import WhatWouldYouDo from '../puzzles/WhatWouldYouDo'
 import LockItUp from '../puzzles/LockItUp'
 import ThinkBeforeYouPost from '../puzzles/ThinkBeforeYouPost'
 import TooGoodToBeTrue from '../puzzles/TooGoodToBeTrue'
+import WhosReallyThere from '../puzzles/WhosReallyThere'
 import ComingSoon from '../puzzles/ComingSoon'
 
 const PUZZLE_COMPONENTS = {
@@ -21,6 +22,7 @@ const PUZZLE_COMPONENTS = {
   'lock-it-up': LockItUp,
   'think-before-you-post': ThinkBeforeYouPost,
   'too-good-to-be-true': TooGoodToBeTrue,
+  'whos-really-there': WhosReallyThere,
 }
 
 export default function PuzzlePage({ isUnitUnlocked, completeUnit }) {
