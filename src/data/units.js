@@ -140,7 +140,7 @@ export const UNITS = [
       es: 'Aprende por qué las actualizaciones ayudan a proteger tus dispositivos.',
     },
     badgeId: 'digital-safety',
-    status: 'soon',
+    status: 'ready',
     color: '#475569',
   },
 ]

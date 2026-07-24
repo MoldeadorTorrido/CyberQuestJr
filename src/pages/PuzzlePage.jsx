@@ -10,6 +10,7 @@ import LockItUp from '../puzzles/LockItUp'
 import ThinkBeforeYouPost from '../puzzles/ThinkBeforeYouPost'
 import TooGoodToBeTrue from '../puzzles/TooGoodToBeTrue'
 import WhosReallyThere from '../puzzles/WhosReallyThere'
+import KeepItUpdated from '../puzzles/KeepItUpdated'
 import ComingSoon from '../puzzles/ComingSoon'
 
 const PUZZLE_COMPONENTS = {
@@ -23,6 +24,7 @@ const PUZZLE_COMPONENTS = {
   'think-before-you-post': ThinkBeforeYouPost,
   'too-good-to-be-true': TooGoodToBeTrue,
   'whos-really-there': WhosReallyThere,
+  'keep-it-updated': KeepItUpdated,
 }
 
 export default function PuzzlePage({ isUnitUnlocked, completeUnit }) {
