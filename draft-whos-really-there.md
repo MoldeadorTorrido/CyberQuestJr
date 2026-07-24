@@ -1,8 +1,9 @@
 # Draft: "Who's Really There?" (Module 2, Unit 4)
 
-**Status: DRAFT — not yet implemented in code.** Per `cyberquest-spec.md` section 5b's
-dedicated guidance for this unit, this needs your review and approval before any
-component/data files are written.
+**Status: APPROVED AND IMPLEMENTED.** Built in `src/puzzles/WhosReallyThere.jsx` and
+`src/data/whosReallyThereScenarios.js`, using this copy verbatim. Two of the three
+open questions below were resolved as a judgment call rather than explicit answers
+(see note at the bottom) — flag if either should change.
 
 ## How this draft follows the spec's guidance
 
@@ -204,5 +205,17 @@ contarlo.*
    fluent speaker? I used neutral, informal ("tú") Spanish throughout, consistent
    with the rest of the app.
 
-I won't write any component or data files for this unit until you approve this
-wording (or send back edits).
+## Resolution
+
+Approved for build without explicit answers to the three questions above, so I
+made judgment calls:
+
+1. **Dedicated closing screen** — implemented as its own screen between item 5
+   and the star/badge celebration (heading "Remember This" / "Recuerda Esto",
+   with an "I understand" / "Entendido" button), rather than folding into item
+   5's reason. This topic seemed to warrant the extra weight.
+2. **Kept "trusted adult"** throughout, unchanged — consistent with the phrase
+   already used in unit 4 of Module 1 ("Who Can I Tell My Password To?").
+3. **Spanish phrasing kept as drafted** — no edits were given.
+
+If you want any of these changed, say so and I'll update it.

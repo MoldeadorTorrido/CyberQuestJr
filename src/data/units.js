@@ -128,7 +128,7 @@ export const UNITS = [
       es: 'Aprende a comprobar quién está realmente detrás de un mensaje.',
     },
     badgeId: 'digital-safety',
-    status: 'soon',
+    status: 'ready',
     color: '#e11d48',
   },
   {
@@ -140,7 +140,7 @@ export const UNITS = [
       es: 'Aprende por qué las actualizaciones ayudan a proteger tus dispositivos.',
     },
     badgeId: 'digital-safety',
-    status: 'soon',
+    status: 'ready',
     color: '#475569',
   },
 ]
